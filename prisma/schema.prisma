@@ -53,7 +53,6 @@ model User {
 
 enum UserRole {
   ADMIN
-  EDITOR
 }
 
 model SystemSettings {

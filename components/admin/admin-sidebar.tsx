@@ -14,8 +14,14 @@ import {
   LogOut,
 } from "lucide-react"
 
+// 系统设置缓存类型
+interface SettingsCache {
+  siteName?: string
+  siteLogo?: string | null
+}
+
 // 缓存设置数据，避免每次页面切换都重新加载
-let settingsCache: any = null
+let settingsCache: SettingsCache | null = null
 let cacheTimestamp = 0
 const CACHE_DURATION = 5 * 60 * 1000 // 5分钟缓存
 
