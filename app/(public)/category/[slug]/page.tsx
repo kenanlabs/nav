@@ -4,9 +4,10 @@ import { getAllCategories, getCategoryBySlug, getSystemSettings, getSites } from
 import { notFound } from "next/navigation"
 import { Badge } from "@/components/ui/badge"
 
-// ISR 配置：每 1 小时自动重新生成页面
-// 当后台更新数据时，revalidatePath("/category/[slug]") 会触发立即重新生成
-export const revalidate = 3600
+// ISR 配置：每 10 秒自动重新生成页面
+// 这样在 seed 后 10 秒内会自动看到新数据
+// 当后台更新数据时，revalidatePath("/") 会触发立即重新生成
+export const revalidate = 10
 
 interface CategoryPageProps {
   params: Promise<{
