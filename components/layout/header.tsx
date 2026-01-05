@@ -1,10 +1,8 @@
 "use client"
 
-import { useState, FormEvent, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
-import { Separator } from "@/components/ui/separator"
 import { ThemeToggle } from "@/components/theme-toggle"
 import {
   DropdownMenu,
@@ -12,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Search, Menu } from "lucide-react"
+import { Search, Menu, X } from "lucide-react"
 
 // 系统设置缓存类型
 interface SettingsCache {
@@ -33,16 +31,18 @@ interface HeaderProps {
   currentCategory?: string
   siteName?: string
   siteLogo?: string | null
+  searchQuery?: string
+  onSearchChange?: (query: string) => void
 }
 
 export function Header({
   categories,
   currentCategory = "",
   siteName = "Conan Nav",
-  siteLogo = null
+  siteLogo = null,
+  searchQuery = "",
+  onSearchChange
 }: HeaderProps) {
-  const router = useRouter()
-  const [searchQuery, setSearchQuery] = useState("")
   const [logo, setLogo] = useState<string | null>(siteLogo)
 
   useEffect(() => {
@@ -69,11 +69,8 @@ export function Header({
     loadSettings()
   }, [])
 
-  const handleSearch = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    if (searchQuery.trim()) {
-      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
-    }
+  const handleClearSearch = () => {
+    onSearchChange?.("")
   }
 
   // 生成短名称
@@ -142,16 +139,26 @@ export function Header({
           </nav>
 
           <div className="flex-shrink-0 pl-2 sm:pl-4 flex items-center gap-2">
-            <form onSubmit={handleSearch} className="relative hidden sm:block">
+            <div className="relative hidden sm:block">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
               <Input
-                type="search"
+                type="text"
                 placeholder="搜索..."
-                className="h-9 w-40 sm:w-48 lg:w-64 pl-8"
+                className="h-9 w-40 sm:w-48 lg:w-64 pl-8 pr-8 [&::-webkit-search-cancel-button]:hidden [&::-ms-clear]:hidden"
                 value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                onChange={(e) => onSearchChange?.(e.target.value)}
               />
-            </form>
+              {searchQuery && (
+                <button
+                  onClick={handleClearSearch}
+                  className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground transition-colors"
+                  type="button"
+                  aria-label="清除搜索"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              )}
+            </div>
             <ThemeToggle />
           </div>
         </div>

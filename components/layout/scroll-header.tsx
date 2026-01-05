@@ -10,9 +10,16 @@ interface ScrollHeaderProps {
     slug: string
   }>
   siteName?: string
+  searchQuery?: string
+  onSearchChange?: (query: string) => void
 }
 
-export function ScrollHeader({ categories, siteName }: ScrollHeaderProps) {
+export function ScrollHeader({
+  categories,
+  siteName,
+  searchQuery = "",
+  onSearchChange
+}: ScrollHeaderProps) {
   const [activeCategory, setActiveCategory] = useState("")
 
   useEffect(() => {
@@ -51,5 +58,13 @@ export function ScrollHeader({ categories, siteName }: ScrollHeaderProps) {
     }
   }, [categories])
 
-  return <Header categories={categories} currentCategory={activeCategory} siteName={siteName} />
+  return (
+    <Header
+      categories={categories}
+      currentCategory={activeCategory}
+      siteName={siteName}
+      searchQuery={searchQuery}
+      onSearchChange={onSearchChange}
+    />
+  )
 }

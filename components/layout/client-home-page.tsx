@@ -1,0 +1,142 @@
+"use client"
+
+import { useState, useMemo } from "react"
+import { ScrollHeader } from "./scroll-header"
+import { Footer } from "./footer"
+import { SiteCard } from "./site-card"
+import { Separator } from "@/components/ui/separator"
+
+interface Site {
+  id: string
+  name: string
+  url: string
+  description: string
+  iconUrl: string | null
+  category?: {
+    name: string
+  }
+}
+
+interface ClientHomePageProps {
+  categories: Array<{
+    id: string
+    name: string
+    slug: string
+    sites?: Site[]
+  }>
+  allCategories: Array<{
+    id: string
+    name: string
+    slug: string
+  }>
+  flatSites: Site[]
+  siteName?: string
+}
+
+export function ClientHomePage({
+  categories,
+  allCategories,
+  flatSites,
+  siteName
+}: ClientHomePageProps) {
+  const [searchQuery, setSearchQuery] = useState("")
+
+  const filteredSites = useMemo(() => {
+    if (!searchQuery.trim()) return []
+
+    const query = searchQuery.toLowerCase()
+    return flatSites.filter(site =>
+      site.name.toLowerCase().includes(query) ||
+      site.description.toLowerCase().includes(query) ||
+      site.url.toLowerCase().includes(query)
+    )
+  }, [searchQuery, flatSites])
+
+  const isSearching = searchQuery.trim().length > 0
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <ScrollHeader
+        categories={allCategories}
+        siteName={siteName}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+      />
+
+      <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 page-enter">
+        <div className="mx-auto max-w-7xl w-full">
+          {isSearching ? (
+            <>
+              <div className="mb-8">
+                <h1 className="text-3xl font-bold tracking-tight">搜索结果</h1>
+                <p className="text-muted-foreground mt-2">
+                  关键词：<span className="font-semibold text-foreground">「{searchQuery}」</span>
+                  <span className="ml-2">
+                    找到 <span className="font-semibold">{filteredSites.length}</span> 个结果
+                  </span>
+                </p>
+              </div>
+
+              {filteredSites.length === 0 ? (
+                <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed">
+                  <p className="text-lg text-muted-foreground">未找到匹配的网站</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    请尝试其他关键词
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {filteredSites.map((site) => (
+                    <SiteCard key={site.id} site={site} />
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {categories.length > 0 ? (
+                <div className="space-y-12">
+                  {categories.map((category, index) => (
+                    <section key={category.id} id={`category-${category.slug}`}>
+                      <div className="flex items-center justify-between mb-6">
+                        <h2 className="text-2xl font-bold tracking-tight">{category.name}</h2>
+                        {category.sites && category.sites.length > 0 && (
+                          <span className="text-sm text-muted-foreground">
+                            {category.sites.length} 个网站
+                          </span>
+                        )}
+                      </div>
+
+                      {category.sites && category.sites.length > 0 ? (
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                          {category.sites.map((site) => (
+                            <SiteCard key={site.id} site={site} />
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="flex min-h-[200px] items-center justify-center rounded-lg border">
+                          <p className="text-sm text-muted-foreground">暂无网站</p>
+                        </div>
+                      )}
+
+                      {index < categories.length - 1 && <Separator className="mt-12" />}
+                    </section>
+                  ))}
+                </div>
+              ) : (
+                <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border">
+                  <p className="text-lg text-muted-foreground">暂无分类数据</p>
+                  <p className="text-sm text-muted-foreground mt-2">
+                    请先在后台创建分类和网站
+                  </p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </main>
+
+      <Footer />
+    </div>
+  )
+}

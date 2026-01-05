@@ -1,9 +1,14 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import Link from "next/link"
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { Globe } from "lucide-react"
+
+// 生成首字母图标（shadcn/ui 简洁风格）
+function getInitialIcon(name: string) {
+  // 提取首字符（中文或英文）
+  return name.trim().charAt(0).toUpperCase()
+}
 
 interface Site {
   id: string
@@ -22,18 +27,44 @@ interface SiteCardProps {
 
 export function SiteCard({ site }: SiteCardProps) {
   const [clicked, setClicked] = useState(false)
+  const [imageLoaded, setImageLoaded] = useState(false)
+  const hasTriedLoad = useRef(false)
 
   // 使用 useMemo 优化 favicon URL 计算
+  // 优先级：用户配置 > DuckDuckGo（在中国可访问）
   const iconSrc = useMemo(() => {
     if (site.iconUrl) return site.iconUrl
 
     try {
       const domain = new URL(site.url).hostname
-      return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`
+      // 使用 DuckDuckGo Favicon API（在中国可访问）
+      // DuckDuckGo 会自动解析 HTML meta 标签，比直接找 /favicon.ico 更准确
+      return `https://icons.duckduckgo.com/ip3/${domain}.ico`
     } catch {
       return null
     }
   }, [site.iconUrl, site.url])
+
+  // 计算首字母图标（作为 fallback）
+  const initial = useMemo(() => getInitialIcon(site.name), [site.name])
+
+  // 使用 useEffect + new Image() 预加载图片
+  useEffect(() => {
+    if (!iconSrc || hasTriedLoad.current) return
+
+    hasTriedLoad.current = true
+    const img = new Image()
+
+    img.onload = () => {
+      setImageLoaded(true)
+    }
+
+    img.onerror = () => {
+      // 保持显示首字母图标
+    }
+
+    img.src = iconSrc
+  }, [iconSrc])
 
   const handleClick = () => {
     // 使用 sendBeacon 异步记录访问，不阻塞页面跳转
@@ -55,18 +86,18 @@ export function SiteCard({ site }: SiteCardProps) {
       <Card className="h-full transition-colors hover:bg-muted">
         <CardHeader>
           <div className="flex items-center space-x-3">
-            {iconSrc ? (
+            {iconSrc && imageLoaded ? (
               <img
                 src={iconSrc}
                 alt={`${site.name} 图标`}
                 className="h-8 w-8 rounded"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none'
-                }}
               />
             ) : (
-              <div className="h-8 w-8 rounded bg-muted flex items-center justify-center">
-                <Globe className="h-4 w-4 text-muted-foreground" />
+              <div
+                className="h-8 w-8 rounded bg-muted flex items-center justify-center text-sm font-semibold text-muted-foreground"
+                title={site.name}
+              >
+                {initial}
               </div>
             )}
             <CardTitle className="text-lg">{site.name}</CardTitle>
