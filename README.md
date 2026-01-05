@@ -2,6 +2,8 @@
 
 一个简洁现代化的网址导航系统，基于 Next.js 15、Prisma 和 shadcn/ui 构建。
 
+[![GitHub stars](https://img.shields.io/github/stars/01wanwu/nav?style=social)](https://github.com/01wanwu/nav/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/01wanwu/nav?style=social)](https://github.com/01wanwu/nav/network/members)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
@@ -40,20 +42,20 @@
 
 <table>
   <tr>
-    <td><img src="screenshots/01-home.png" /></td>
-    <td><img src="screenshots/02-search.png" /></td>
+    <td><img src="screenshots/01-home.png" alt="首页" /></td>
+    <td><img src="screenshots/02-search.png" alt="搜索" /></td>
   </tr>
   <tr>
-    <td><img src="screenshots/03-dashboard.png" /></td>
-    <td><img src="screenshots/04-editor.png" /></td>
+    <td><img src="screenshots/03-dashboard.png" alt="仪表盘" /></td>
+    <td><img src="screenshots/04-editor.png" alt="编辑管理员信息" /></td>
   </tr>
   <tr>
-    <td><img src="screenshots/05-sites.png" /></td>
-    <td><img src="screenshots/06-category.png" /></td>
+    <td><img src="screenshots/05-sites.png" alt="网站管理" /></td>
+    <td><img src="screenshots/06-category.png" alt="分类管理" /></td>
   </tr>
   <tr>
-    <td><img src="screenshots/07-system.png" /></td>
-    <td><img src="screenshots/08-login.png" /></td>
+    <td><img src="screenshots/07-system.png" alt="系统设置" /></td>
+    <td><img src="screenshots/08-login.png" alt="登录页" /></td>
   </tr>
 </table>
 
@@ -66,6 +68,7 @@
 - **后端**: Next.js Server Actions、Prisma ORM
 - **数据库**: PostgreSQL
 - **认证**: 简单 Cookie 认证（单管理员）
+- **部署**: Docker、GitHub Actions CI/CD
 
 ## 🚀 快速开始
 
@@ -90,8 +93,9 @@ npm run db:seed:full  # 10个分类+50+个精选网站
 npm run dev
 ```
 
-访问 [http://localhost:3000](http://localhost:3000) 查看前台，
-访问 [http://localhost:3000/admin](http://localhost:3000/admin) 查看后台。
+🌐 **访问地址**：
+- 前台：`http://localhost:3000`
+- 后台：`http://localhost:3000/admin`
 
 **默认管理员账号**：
 - 邮箱：`admin@example.com`
@@ -124,21 +128,23 @@ docker compose up -d
 docker compose logs -f nav
 ```
 
-访问 [http://localhost:3000](http://localhost:3000) 查看前台，
-访问 [http://localhost:3000/admin](http://localhost:3000/admin) 查看后台。
+🌐 **访问地址**（根据 `PORT` 环境变量，默认 3000）：
+- 本地：`http://localhost:3000`
+- 远程：`http://你的服务器IP:3000` 或 `http://你的域名.com`
+- 后台：`http://localhost:3000/admin` 或 `http://你的域名.com/admin`
 
 #### 环境变量（Docker 部署）
 
 ```bash
 # 核心配置（必填）
 NEXTAUTH_SECRET=your-nextauth-secret-here
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:3000 # 生产环境填写实际域名
 
 # Docker 配置（可选，有默认值）
 POSTGRES_USER=nav
 POSTGRES_PASSWORD=FkyM5NhrsYHtmmKc
 POSTGRES_DB=nav
-POSTGRES_PORT=5232
+POSTGRES_PORT=5432
 PORT=3000
 ```
 
@@ -294,6 +300,17 @@ Conan Nav 采用**单管理员架构**，管理员信息的编辑已集成到侧
 - 📘 [完整文档](https://deepwiki.com/01wanwu/nav)
 - 📬 [问题反馈](../../issues)
 - 💬 [讨论区](../../discussions)
+- ⭐ [Star History](https://star-history.com/#01wanwu/nav&Date)
+
+## 🤝 贡献
+
+欢迎贡献代码、报告问题或提出新功能建议！
+
+1. Fork 本仓库
+2. 创建特性分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交更改 (`git commit -m 'feat: add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 开启 Pull Request
 
 ## 📄 License
 
