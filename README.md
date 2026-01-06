@@ -300,7 +300,10 @@ Conan Nav 采用**单管理员架构**，管理员信息的编辑已集成到侧
 - 📘 [完整文档](https://deepwiki.com/01wanwu/nav)
 - 📬 [问题反馈](../../issues)
 - 💬 [讨论区](../../discussions)
-- ⭐ [Star History](https://star-history.com/#01wanwu/nav&Date)
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=01wanwu/nav&type=date&legend=top-left)](https://www.star-history.com/#01wanwu/nav&type=date&legend=top-left)
 
 ## 🤝 贡献
 
