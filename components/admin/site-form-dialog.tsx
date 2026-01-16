@@ -46,9 +46,10 @@ interface SiteFormDialogProps {
   onOpenChange: (open: boolean) => void
   site?: Site | null
   mode: "create" | "edit"
+  onSuccess?: () => void
 }
 
-export function SiteFormDialog({ open, onOpenChange, site, mode }: SiteFormDialogProps) {
+export function SiteFormDialog({ open, onOpenChange, site, mode, onSuccess }: SiteFormDialogProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
@@ -114,6 +115,7 @@ export function SiteFormDialog({ open, onOpenChange, site, mode }: SiteFormDialo
           description: `网站"${formData.name}"已${mode === "create" ? "创建" : "更新"}`,
         })
         onOpenChange(false)
+        onSuccess?.()
         router.refresh()
       } else {
         toast({

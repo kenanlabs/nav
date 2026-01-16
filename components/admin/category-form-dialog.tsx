@@ -29,9 +29,10 @@ interface CategoryFormDialogProps {
   onOpenChange: (open: boolean) => void
   categoryId?: string | null
   mode: "create" | "edit"
+  onSuccess?: () => void
 }
 
-export function CategoryFormDialog({ open, onOpenChange, categoryId, mode }: CategoryFormDialogProps) {
+export function CategoryFormDialog({ open, onOpenChange, categoryId, mode, onSuccess }: CategoryFormDialogProps) {
   const router = useRouter()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
@@ -93,6 +94,7 @@ export function CategoryFormDialog({ open, onOpenChange, categoryId, mode }: Cat
           description: `分类"${formData.name}"已${mode === "create" ? "创建" : "更新"}`,
         })
         onOpenChange(false)
+        onSuccess?.()
         router.refresh()
       } else {
         toast({

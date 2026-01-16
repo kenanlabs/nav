@@ -2,8 +2,8 @@
 
 一个简洁现代化的网址导航系统，基于 Next.js 15、Prisma 和 shadcn/ui 构建。
 
-[![GitHub stars](https://img.shields.io/github/stars/01wanwu/nav?style=social)](https://github.com/01wanwu/nav/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/01wanwu/nav?style=social)](https://github.com/01wanwu/nav/network/members)
+[![GitHub stars](https://img.shields.io/github/stars/kenanlabs/nav?style=social)](https://github.com/kenanlabs/nav/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/kenanlabs/nav?style=social)](https://github.com/kenanlabs/nav/network/members)
 [![Next.js](https://img.shields.io/badge/Next.js-15-black)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-19-blue)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
@@ -113,7 +113,7 @@ npm run dev
 
 ```bash
 # 1. 克隆代码
-git clone https://github.com/01wanwu/nav.git
+git clone https://github.com/kenanlabs/nav.git
 cd nav
 
 # 2. 配置环境变量
@@ -171,7 +171,7 @@ docker compose down -v
 
 本项目使用 GitHub Actions 自动构建 Docker 镜像，推送到 GitHub Container Registry：
 
-- **镜像地址**: `ghcr.io/01wanwu/nav:latest`
+- **镜像地址**: `ghcr.io/kenanlabs/nav:latest`
 - **触发条件**: Git tag 推送（格式：`v*.*.*`）
 - **构建结果**: 同时推送 `version` 和 `latest` 标签
 
@@ -187,7 +187,7 @@ git push origin v1.0.0
 
 ```bash
 # 1. 克隆代码
-git clone https://github.com/01wanwu/nav.git
+git clone https://github.com/kenanlabs/nav.git
 cd nav
 
 # 2. 安装依赖
@@ -297,13 +297,13 @@ Conan Nav 采用**单管理员架构**，管理员信息的编辑已集成到侧
 
 ## 💡 相关资源
 
-- 📘 [完整文档](https://deepwiki.com/01wanwu/nav)
+- 📘 [完整文档](https://deepwiki.com/kenanlabs/nav)
 - 📬 [问题反馈](../../issues)
 - 💬 [讨论区](../../discussions)
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=01wanwu/nav&type=date&legend=top-left)](https://www.star-history.com/#01wanwu/nav&type=date&legend=top-left)
+[![Star History Chart](https://api.star-history.com/svg?repos=kenanlabs/nav&type=date&legend=top-left)](https://www.star-history.com/#kenanlabs/nav&type=date&legend=top-left)
 
 ## 🤝 贡献
 

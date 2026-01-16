@@ -286,6 +286,7 @@ export default function AdminCategoriesPage() {
         onOpenChange={setDialogOpen}
         categoryId={editingCategoryId}
         mode={dialogMode}
+        onSuccess={() => loadCategories()}
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

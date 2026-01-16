@@ -360,6 +360,7 @@ export default function AdminSitesPage() {
         onOpenChange={setDialogOpen}
         site={editingSite}
         mode={dialogMode}
+        onSuccess={() => loadSites()}
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

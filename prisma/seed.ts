@@ -172,11 +172,11 @@ async function main() {
         showFooter: true,
         footerCopyright: `© ${new Date().getFullYear()} Conan Nav. All rights reserved.`,
         footerLinks: [
-          { name: 'GitHub', url: 'https://github.com/01wanwu/nav' }
+          { name: 'GitHub', url: 'https://github.com/kenanlabs/nav' }
         ],
         showAdminLink: true,
         enableVisitTracking: true,
-        githubUrl: 'https://github.com/01wanwu/nav',
+        githubUrl: 'https://github.com/kenanlabs/nav',
       },
     })
     console.log('  ✓ 系统设置已初始化')
