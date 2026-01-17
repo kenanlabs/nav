@@ -61,7 +61,7 @@ export function SearchableLayout({
         currentCategory={currentCategory}
       />
 
-      <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8 page-enter">
+      <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
         <div className="mx-auto max-w-7xl w-full">
           {isSearching ? (
             // 搜索结果

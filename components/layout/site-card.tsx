@@ -7,8 +7,22 @@ import { ExternalLink } from "lucide-react"
 
 // 生成首字母图标（shadcn/ui 简洁风格）
 function getInitialIcon(name: string) {
-  // 提取首字符（中文或英文）
-  return name.trim().charAt(0).toUpperCase()
+  const trimmed = name.trim()
+  for (let i = 0; i < trimmed.length; i++) {
+    const char = trimmed[i]
+    const code = char.codePointAt(0) || 0
+
+    // 匹配：英文字母 (A-Z, a-z) 或 中文字符 (0x4e00-0x9fff)
+    const isLetter = (code >= 65 && code <= 90) || (code >= 97 && code <= 122)
+    const isChinese = code >= 0x4e00 && code <= 0x9fff
+
+    if (isLetter || isChinese) {
+      return char.toUpperCase()
+    }
+  }
+
+  // 如果没有找到合适的字符，返回默认图标
+  return 'N'
 }
 
 interface Site {
@@ -27,7 +41,6 @@ interface SiteCardProps {
 }
 
 export function SiteCard({ site }: SiteCardProps) {
-  const [clicked, setClicked] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
   const hasTriedLoad = useRef(false)
 
@@ -73,7 +86,6 @@ export function SiteCard({ site }: SiteCardProps) {
       const data = JSON.stringify({ siteId: site.id })
       navigator.sendBeacon('/api/visit', new Blob([data], { type: 'application/json' }))
     }
-    setClicked(true)
   }
 
   return (
@@ -91,7 +103,7 @@ export function SiteCard({ site }: SiteCardProps) {
           <ExternalLink className="h-4 w-4 text-muted-foreground" />
         </div>
 
-        <CardHeader>
+        <CardHeader className="h-full flex flex-col justify-center">
           <div className="flex items-center space-x-3">
             {iconSrc && imageLoaded ? (
               <img
@@ -107,11 +119,15 @@ export function SiteCard({ site }: SiteCardProps) {
                 {initial}
               </div>
             )}
-            <CardTitle className="text-lg">{site.name}</CardTitle>
+            <div className="flex-1 min-w-0">
+              <CardTitle className="text-lg line-clamp-2 leading-tight" title={site.name}>{site.name}</CardTitle>
+              {site.description && (
+                <CardDescription className="mt-2 line-clamp-2">
+                  {site.description}
+                </CardDescription>
+              )}
+            </div>
           </div>
-          <CardDescription className="mt-2 line-clamp-2">
-            {site.description}
-          </CardDescription>
         </CardHeader>
       </Card>
     </Link>

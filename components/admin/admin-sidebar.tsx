@@ -11,6 +11,7 @@ import {
   Globe,
   FolderKanban,
   Users,
+  Database,
   LogOut,
 } from "lucide-react"
 
@@ -40,6 +41,11 @@ const navItems = [
     title: "分类管理",
     href: "/admin/categories",
     icon: FolderKanban,
+  },
+  {
+    title: "数据管理",
+    href: "/admin/data",
+    icon: Database,
   },
   {
     title: "系统管理",

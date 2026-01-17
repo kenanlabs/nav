@@ -48,7 +48,8 @@ export function AdminAvatar() {
           } else {
             console.error("No user data in response:", data)
           }
-        } else {
+        } else if (res.status !== 401) {
+          // 只在非 401 错误时打印日志 (401 是未登录,属于正常情况)
           console.error("Failed to fetch user, status:", res.status)
         }
       } catch (error) {

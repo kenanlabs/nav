@@ -709,3 +709,255 @@ export async function getVisitFrequency(days: number = 30) {
   }
 }
 
+// ==================== Data Import/Export ====================
+
+// 完整数据导出（JSON格式，包含所有字段）
+export async function exportData() {
+  try {
+    const categories = await prisma.category.findMany({
+      orderBy: { order: 'asc' },
+      include: {
+        sites: {
+          orderBy: { order: 'asc' },
+        },
+      },
+    })
+
+    // 导出完整数据（包含描述、排序等所有字段）
+    const fullData = categories.map(category => ({
+      name: category.name,
+      slug: category.slug,
+      order: category.order,
+      sites: category.sites.map(site => ({
+        name: site.name,
+        url: site.url,
+        description: site.description,
+        iconUrl: site.iconUrl,
+        order: site.order,
+        isPublished: site.isPublished,
+      })),
+    }))
+
+    return {
+      success: true,
+      data: fullData,
+    }
+  } catch (error) {
+    console.error("Error exporting data:", error)
+    return { success: false, error: "Failed to export data" }
+  }
+}
+
+// Chrome书签导出（HTML格式，仅基本字段，兼容浏览器）
+export async function exportBookmarks() {
+  try {
+    const categories = await prisma.category.findMany({
+      orderBy: { order: 'asc' },
+      include: {
+        sites: {
+          orderBy: { order: 'asc' },
+          where: { isPublished: true },
+        },
+      },
+    })
+
+    // 转换为书签格式（仅基本字段）
+    const bookmarkData = categories.map(category => ({
+      name: category.name,
+      sites: category.sites.map(site => ({
+        name: site.name,
+        url: site.url,
+        icon: site.iconUrl || undefined,
+      })),
+    }))
+
+    return {
+      success: true,
+      data: bookmarkData,
+    }
+  } catch (error) {
+    console.error("Error exporting bookmarks:", error)
+    return { success: false, error: "Failed to export bookmarks" }
+  }
+}
+
+// JSON数据导入（完整数据）
+export async function importData(
+  jsonData: any,
+  mode: 'overwrite' | 'append'
+) {
+  try {
+    // 验证数据格式
+    if (!Array.isArray(jsonData)) {
+      return { success: false, error: "Invalid data format" }
+    }
+
+    // 覆盖模式：删除所有现有数据
+    if (mode === 'overwrite') {
+      await prisma.visit.deleteMany({})
+      await prisma.site.deleteMany({})
+      await prisma.category.deleteMany({})
+    }
+
+    // 追加模式：获取当前最大排序值
+    let currentMaxOrder = 0
+    if (mode === 'append') {
+      const maxOrderCategory = await prisma.category.findFirst({
+        orderBy: { order: 'desc' },
+        select: { order: true },
+      })
+      currentMaxOrder = maxOrderCategory?.order || 0
+    }
+
+    // 导入分类和网站
+    for (const categoryData of jsonData) {
+      // 生成分类 slug
+      const transliteration = require('transliteration')
+      const slug = categoryData.slug || transliteration.slugify(categoryData.name)
+
+      // 检查分类是否已存在（追加模式）
+      let category
+      if (mode === 'append') {
+        category = await prisma.category.findUnique({
+          where: { slug },
+        })
+      }
+
+      if (!category) {
+        currentMaxOrder++
+        category = await prisma.category.create({
+          data: {
+            name: categoryData.name,
+            slug,
+            order: categoryData.order !== undefined ? categoryData.order : currentMaxOrder,
+          },
+        })
+      }
+
+      // 导入网站
+      for (const siteData of categoryData.sites) {
+        await prisma.site.create({
+          data: {
+            name: siteData.name,
+            url: siteData.url,
+            description: siteData.description || '',
+            iconUrl: siteData.iconUrl || null,
+            categoryId: category.id,
+            order: siteData.order || 0,
+            isPublished: siteData.isPublished !== undefined ? siteData.isPublished : true,
+          },
+        })
+      }
+    }
+
+    // 重新验证缓存
+    revalidatePath('/', 'layout')
+    revalidatePath('/category/[slug]', 'page')
+
+    return {
+      success: true,
+      message: mode === 'overwrite'
+        ? `成功导入 ${jsonData.length} 个分类`
+        : `成功追加 ${jsonData.length} 个分类`,
+      importedCount: jsonData.length,
+    }
+  } catch (error) {
+    console.error("Error importing data:", error)
+    return { success: false, error: "Failed to import data" }
+  }
+}
+
+export async function importBookmarks(
+  html: string,
+  mode: 'overwrite' | 'append'
+) {
+  try {
+    const { parseChromeBookmarks } = await import('./bookmarks')
+    const parsed = parseChromeBookmarks(html)
+
+    // 覆盖模式：删除所有现有网站和分类
+    if (mode === 'overwrite') {
+      // 删除所有网站（级联删除会自动处理关联）
+      await prisma.site.deleteMany({})
+      // 删除所有分类
+      await prisma.category.deleteMany({})
+    }
+
+    // 追加模式：保留现有数据，只添加新的
+    let currentMaxOrder = 0
+    if (mode === 'append') {
+      const maxOrderCategory = await prisma.category.findFirst({
+        orderBy: { order: 'desc' },
+        select: { order: true },
+      })
+      currentMaxOrder = maxOrderCategory?.order || 0
+    }
+
+    // 导入分类和网站
+    for (const categoryData of parsed.categories) {
+      // 生成分类 slug（使用 transliteration 将中文转换为拼音）
+      const transliteration = require('transliteration')
+      const slug = transliteration.slugify(categoryData.name)
+
+      // 检查分类是否已存在（追加模式）
+      let category
+      if (mode === 'append') {
+        category = await prisma.category.findUnique({
+          where: { slug },
+        })
+      }
+
+      if (!category) {
+        currentMaxOrder++
+        category = await prisma.category.create({
+          data: {
+            name: categoryData.name,
+            slug,
+            order: currentMaxOrder,
+          },
+        })
+      }
+
+      // 导入网站
+      let currentSiteOrder = 0
+      if (mode === 'append') {
+        const maxOrderSite = await prisma.site.findFirst({
+          where: { categoryId: category.id },
+          orderBy: { order: 'desc' },
+          select: { order: true },
+        })
+        currentSiteOrder = maxOrderSite?.order || 0
+      }
+
+      for (const siteData of categoryData.sites) {
+        currentSiteOrder++
+        await prisma.site.create({
+          data: {
+            name: siteData.name,
+            url: siteData.url,
+            description: siteData.url, // 使用URL作为描述
+            iconUrl: siteData.icon || null,
+            categoryId: category.id,
+            order: currentSiteOrder,
+            isPublished: true,
+          },
+        })
+      }
+    }
+
+    // 重新验证缓存
+    revalidatePath('/', 'layout')
+    revalidatePath('/category/[slug]', 'page')
+
+    return {
+      success: true,
+      message: mode === 'overwrite'
+        ? `成功导入 ${parsed.categories.length} 个分类`
+        : `成功追加 ${parsed.categories.length} 个分类`,
+      importedCount: parsed.categories.length,
+    }
+  } catch (error) {
+    console.error("Error importing bookmarks:", error)
+    return { success: false, error: "Failed to import bookmarks" }
+  }
+}
