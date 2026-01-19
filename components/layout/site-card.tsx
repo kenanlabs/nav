@@ -122,7 +122,7 @@ export function SiteCard({ site }: SiteCardProps) {
             <div className="flex-1 min-w-0">
               <CardTitle className="text-lg line-clamp-2 leading-tight" title={site.name}>{site.name}</CardTitle>
               {site.description && (
-                <CardDescription className="mt-2 line-clamp-2">
+                <CardDescription className="mt-2 line-clamp-1" title={site.description}>
                   {site.description}
                 </CardDescription>
               )}

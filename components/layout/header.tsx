@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { PoetryToggle } from "@/components/poetry-toggle"
 import { SiteSubmissionDialog } from "@/components/layout/site-submission-dialog"
 import {
   DropdownMenu,
@@ -169,6 +170,7 @@ export function Header({
               <SiteSubmissionDialog categories={categories} />
             )}
 
+            <PoetryToggle />
             <ThemeToggle />
           </div>
         </div>

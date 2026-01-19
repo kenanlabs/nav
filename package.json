@@ -38,6 +38,7 @@
     "bcrypt": "^5.1.1",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jinrishici": "^1.0.6",
     "jsdom": "^27.4.0",
     "lucide-react": "^0.462.0",
     "next": "^15.5.9",

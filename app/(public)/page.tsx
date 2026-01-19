@@ -1,5 +1,6 @@
 import { SearchableLayout } from "@/components/layout/searchable-layout"
 import { SiteCard } from "@/components/layout/site-card"
+import { JinrishiciCardWrapper } from "@/components/layout/jinrishici-card-wrapper"
 import { getAllCategories, getCategories, getSystemSettings, getSites } from "@/lib/actions"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
@@ -24,9 +25,14 @@ export default async function HomePage() {
       flatSites={flatSites}
       siteName={settings?.siteName}
     >
-      {categories && categories.length > 0 ? (
-        <div className="space-y-12">
-          {categories.map((category, index) => (
+      {/* 今日诗词 - 固定在右上角，根据用户设置显示/隐藏 */}
+      <JinrishiciCardWrapper />
+
+      <div className="space-y-12 lg:pr-36 lg:pl-2">
+        {/* 分类内容 */}
+        {categories && categories.length > 0 ? (
+          <>
+            {categories.map((category, index) => (
             <section key={category.id} id={`category-${category.slug}`}>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold tracking-tight">{category.name}</h2>
@@ -52,15 +58,16 @@ export default async function HomePage() {
               {index < categories.length - 1 && <Separator className="mt-12" />}
             </section>
           ))}
-        </div>
-      ) : (
-        <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border">
-          <p className="text-lg text-muted-foreground">暂无分类数据</p>
-          <p className="text-sm text-muted-foreground mt-2">
-            请先在后台创建分类和网站
-          </p>
-        </div>
-      )}
+          </>
+        ) : (
+          <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border">
+            <p className="text-lg text-muted-foreground">暂无分类数据</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              请先在后台创建分类和网站
+            </p>
+          </div>
+        )}
+      </div>
     </SearchableLayout>
   )
 }

@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 引入霞鹜文楷字体 */
+@import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css');
+
+/* 定义霞鹜文楷字体类 */
+.font-lxgw-wenkai {
+  font-family: 'LXGW WenKai', 'STKaiti', 'KaiTi', serif;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;

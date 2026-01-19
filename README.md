@@ -18,7 +18,8 @@
 - 📱 响应式设计 - 完美适配移动端
 - 🎨 简洁优雅 - 严格遵循 shadcn/ui 设计规范
 - 🖼️ 智能图标 - 自动获取网站图标，加载失败时显示首字母
-- 🌓 暗黑模式 - 右上角一键切换
+- 🌓 暗黑模式 - 右上角一键切换（支持浅色/深色/跟随系统）
+- 📜 **古诗词展示** - 每日诗词自动获取，优雅的竖向排版
 - 📝 **网站收录** - 访客可提交网站，管理员审核后发布
 
 ### 后台管理
@@ -239,7 +240,13 @@ pm2 save
 ├── components/           # React 组件
 │   ├── ui/              # shadcn/ui 组件
 │   ├── layout/          # 布局组件
-│   └── admin/           # 后台组件
+│   │   ├── jinrishici-card.tsx         # 古诗词卡片组件
+│   │   └── jinrishici-card-wrapper.tsx # 古诗词卡片包装器（动画）
+│   ├── admin/           # 后台组件
+│   ├── poetry-toggle.tsx         # 古诗词开关按钮
+│   └── theme-provider/  # 主题提供者
+├── hooks/
+│   └── use-poetry-toggle.ts  # 古诗词显示状态管理 hook
 ├── lib/                 # 工具函数和 Server Actions
 ├── prisma/              # 数据库模型和种子数据
 ├── public/              # 静态资源

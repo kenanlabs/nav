@@ -62,7 +62,7 @@ export function SearchableLayout({
       />
 
       <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mx-auto max-w-7xl w-full">
+        <div className="mx-auto max-w-[1600px] w-full">
           {isSearching ? (
             // 搜索结果
             <>
