@@ -21,23 +21,26 @@ model Category {
 }
 
 model Site {
-  id          String    @id @default(cuid())
-  name        String
-  url         String
-  description String
-  iconUrl     String?
-  categoryId  String
-  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  isPublished Boolean   @default(false)
-  order       Int       @default(0)
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-  visits      Visit[]
+  id               String    @id @default(cuid())
+  name             String
+  url              String
+  description      String
+  iconUrl          String?
+  submitterContact String?   @map("submitter_contact")
+  submitterIp       String?   @map("submitter_ip")
+  categoryId       String
+  category         Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  isPublished      Boolean   @default(false)
+  order            Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @default(now())
+  visits           Visit[]
 
   @@index([categoryId])
   @@index([isPublished])
   @@index([categoryId, isPublished])
   @@index([order])
+  @@map("Site")
 }
 
 model User {
@@ -73,6 +76,9 @@ model SystemSettings {
   icpLink          String?  @map("icp_link")
   // Visit tracking settings
   enableVisitTracking Boolean @default(true) @map("enable_visit_tracking")
+  // Submission settings (网站收录设置)
+  enableSubmission     Boolean @default(true) @map("enable_submission")
+  submissionMaxPerDay  Int     @default(3) @map("submission_max_per_day")
   // GitHub link
   githubUrl        String?  @map("github_url")
   createdAt        DateTime @default(now()) @map("created_at")

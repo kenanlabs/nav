@@ -263,13 +263,13 @@ export function ImportBookmarksDialog({
               <AlertTitle className="font-semibold">支持的文件格式</AlertTitle>
               <AlertDescription className="mt-2 text-sm space-y-3">
                 <div>
-                  <p className="font-medium text-primary mb-1">JSON格式（推荐）</p>
+                  <p className="font-medium text-blue-600 dark:text-blue-400 mb-1">JSON格式（推荐）</p>
                   <p className="text-muted-foreground text-xs leading-relaxed">
                     本系统完整备份格式，包含描述、排序、发布状态等所有字段。导入后不会丢失任何数据，适合数据迁移和恢复。
                   </p>
                 </div>
                 <div>
-                  <p className="font-medium text-blue-600 mb-1">Chrome书签</p>
+                  <p className="font-medium text-muted-foreground mb-1">Chrome书签</p>
                   <p className="text-muted-foreground text-xs leading-relaxed">
                     从Chrome等浏览器导入的书签格式，仅包含名称、URL和图标。如果浏览器书签包含多层嵌套文件夹（如 <code className="px-1 py-0.5 rounded bg-background font-mono">/云服务/Cloudflare</code>），
                     系统会自动将每个文件夹拆分为独立分类。

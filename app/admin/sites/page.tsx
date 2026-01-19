@@ -31,9 +31,16 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { Plus, Pencil, Trash2, Power, Loader2 } from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Plus, Pencil, Trash2, Power, Loader2, Filter } from "lucide-react"
 import { SiteFormDialog } from "@/components/admin/site-form-dialog"
-import { getSitesWithPagination, deleteSite, toggleSitePublish } from "@/lib/actions"
+import { getSitesWithPagination, deleteSite, toggleSitePublish, getCategoriesForFilter } from "@/lib/actions"
 import { useToast } from "@/hooks/use-toast"
 
 interface Site {
@@ -42,6 +49,8 @@ interface Site {
   url: string
   description: string
   iconUrl: string | null
+  submitterContact: string | null
+  submitterIp: string | null
   categoryId: string
   isPublished: boolean
   order: number
@@ -49,6 +58,8 @@ interface Site {
     id: string
     name: string
   }
+  createdAt: Date
+  updatedAt: Date
 }
 
 interface PaginationInfo {
@@ -68,15 +79,27 @@ export default function AdminSitesPage() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [deletingSiteId, setDeletingSiteId] = useState<string | null>(null)
 
+  // 筛选状态
+  const [filterCategory, setFilterCategory] = useState<string>("all")
+  const [filterStatus, setFilterStatus] = useState<string>("all")
+  const [filterSubmitter, setFilterSubmitter] = useState<string>("all")
+
   // 分页状态
   const [page, setPage] = useState(1)
   const [pagination, setPagination] = useState<PaginationInfo | null>(null)
+  const [categories, setCategories] = useState<Array<{ id: string; name: string }>>([])
 
   // 加载网站列表
   const loadSites = async (currentPage = page) => {
     setLoading(true)
     try {
-      const result = await getSitesWithPagination({ page: currentPage, pageSize: 10 })
+      const result = await getSitesWithPagination({
+        page: currentPage,
+        pageSize: 10,
+        categoryId: filterCategory !== "all" ? filterCategory : undefined,
+        isPublished: filterStatus !== "all" ? (filterStatus === "true") : undefined,
+        submitterIp: filterSubmitter !== "all" ? filterSubmitter : undefined,
+      })
       if (result.success && result.data) {
         setSites(result.data)
         setPagination(result.pagination || null)
@@ -91,7 +114,7 @@ export default function AdminSitesPage() {
     } catch (error) {
       toast({
         variant: "destructive",
-        title: "加载失败",
+title: "加载失败",
         description: "发生错误，请稍后重试",
       })
     } finally {
@@ -99,9 +122,35 @@ export default function AdminSitesPage() {
     }
   }
 
+  // 加载分类列表
+  const loadCategories = async () => {
+    try {
+      const result = await getCategoriesForFilter()
+      if (result.success && result.data) {
+        setCategories(result.data)
+      }
+    } catch (error) {
+      console.error("Failed to load categories:", error)
+    }
+  }
+
   useEffect(() => {
     loadSites(1)
+    loadCategories()
   }, [])
+
+  // 重置筛选
+  const handleResetFilters = () => {
+    setFilterCategory("all")
+    setFilterStatus("all")
+    setFilterSubmitter("all")
+    setPage(1)
+  }
+
+  // 筛选条件改变时重新加载
+  useEffect(() => {
+    loadSites(1)
+  }, [filterCategory, filterStatus, filterSubmitter])
 
   // 打开创建对话框
   const handleCreate = () => {
@@ -203,7 +252,65 @@ export default function AdminSitesPage() {
         <CardHeader>
           <CardTitle>网站列表</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">分类:</span>
+              <Select value={filterCategory} onValueChange={setFilterCategory}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="全部分类" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部分类</SelectItem>
+                  {categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id}>
+                      {category.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">状态:</span>
+              <Select value={filterStatus} onValueChange={setFilterStatus}>
+                <SelectTrigger className="w-[120px]">
+                  <SelectValue placeholder="全部状态" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部状态</SelectItem>
+                  <SelectItem value="true">已发布</SelectItem>
+                  <SelectItem value="false">草稿</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">提交者:</span>
+              <Select value={filterSubmitter} onValueChange={setFilterSubmitter}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="全部来源" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">全部来源</SelectItem>
+                  <SelectItem value="true">用户提交</SelectItem>
+                  <SelectItem value="false">管理员创建</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {(filterCategory !== "all" || filterStatus !== "all" || filterSubmitter !== "all") && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleResetFilters}
+                className="h-8"
+              >
+                重置
+              </Button>
+            )}
+          </div>
+
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -221,6 +328,7 @@ export default function AdminSitesPage() {
                   <TableHead>URL</TableHead>
                   <TableHead>分类</TableHead>
                   <TableHead>状态</TableHead>
+                  <TableHead>提交者</TableHead>
                   <TableHead className="text-right">操作</TableHead>
                 </TableRow>
               </TableHeader>
@@ -262,6 +370,13 @@ export default function AdminSitesPage() {
                         <Badge variant="default">已发布</Badge>
                       ) : (
                         <Badge variant="secondary">草稿</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {site.submitterIp ? (
+                        <span className="text-xs">用户提交</span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">管理员创建</span>
                       )}
                     </TableCell>
                     <TableCell className="text-right">

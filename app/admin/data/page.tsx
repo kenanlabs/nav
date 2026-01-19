@@ -128,19 +128,19 @@ export default function DataManagementPage() {
             </h4>
             <div className="space-y-3 ml-7">
               {/* JSON格式 */}
-              <div className="p-3 rounded-lg border border-primary/20 bg-primary/5">
+              <div className="p-3 rounded-lg border border-blue-600/20 bg-blue-500/5">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-primary font-semibold">JSON格式（推荐）</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">完整数据</span>
+                  <span className="text-blue-600 font-semibold">JSON格式（推荐）</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">完整数据</span>
                 </div>
                 <p className="text-muted-foreground text-xs">包含描述、排序、发布状态等所有字段，不会丢失任何数据，适合数据迁移和恢复</p>
               </div>
 
               {/* Chrome书签格式 */}
-              <div className="p-3 rounded-lg border border-blue-600/20 bg-blue-500/5">
+              <div className="p-3 rounded-lg border border-muted bg-muted/30">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-blue-600 font-semibold">Chrome书签</span>
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300">浏览器格式</span>
+                  <span className="font-semibold">Chrome书签</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">浏览器格式</span>
                 </div>
                 <div className="space-y-2">
                   <p className="text-muted-foreground text-xs">
@@ -152,7 +152,7 @@ export default function DataManagementPage() {
                 </div>
 
                 {/* 多层嵌套说明 - 仅导入时 */}
-                <div className="mt-2 p-2 rounded bg-background/50 border-l-2 border-blue-600">
+                <div className="mt-2 p-2 rounded bg-background/50 border-l-2 border-muted-foreground/30">
                   <p className="text-muted-foreground text-xs leading-relaxed">
                     <span className="font-medium">多层嵌套处理（导入时）：</span>如果浏览器书签包含多层嵌套文件夹（如 <code className="px-1 py-0.5 rounded bg-background font-mono">/云服务/Cloudflare</code>），
                     系统会自动将每个文件夹拆分为独立分类。例如：<code className="px-1 py-0.5 rounded bg-background font-mono">云服务</code> 和
@@ -204,17 +204,17 @@ export default function DataManagementPage() {
                   </tr>
                   <tr className="border-b">
                     <td className="p-2">网站描述</td>
-                    <td className="text-center p-2 text-primary font-semibold">✅</td>
+                    <td className="text-center p-2 text-blue-600 dark:text-blue-400 font-semibold">✅</td>
                     <td className="text-center p-2">❌</td>
                   </tr>
                   <tr className="border-b">
                     <td className="p-2">排序</td>
-                    <td className="text-center p-2 text-primary font-semibold">✅</td>
+                    <td className="text-center p-2 text-blue-600 dark:text-blue-400 font-semibold">✅</td>
                     <td className="text-center p-2">❌</td>
                   </tr>
                   <tr>
                     <td className="p-2">发布状态</td>
-                    <td className="text-center p-2 text-primary font-semibold">✅</td>
+                    <td className="text-center p-2 text-blue-600 dark:text-blue-400 font-semibold">✅</td>
                     <td className="text-center p-2">❌</td>
                   </tr>
                 </tbody>

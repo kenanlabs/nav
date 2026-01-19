@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { SiteSubmissionDialog } from "@/components/layout/site-submission-dialog"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -15,6 +16,7 @@ import { Search, Menu, X } from "lucide-react"
 // 系统设置缓存类型
 interface SettingsCache {
   siteLogo?: string | null
+  enableSubmission?: boolean
 }
 
 // 缓存设置数据，避免每次页面切换都重新加载
@@ -44,6 +46,7 @@ export function Header({
   onSearchChange
 }: HeaderProps) {
   const [logo, setLogo] = useState<string | null>(siteLogo)
+  const [enableSubmission, setEnableSubmission] = useState<boolean>(true)
 
   useEffect(() => {
     async function loadSettings() {
@@ -61,6 +64,7 @@ export function Header({
           settingsCache = settings
           cacheTimestamp = now
           if (settings.siteLogo) setLogo(settings.siteLogo)
+          setEnableSubmission(settings.enableSubmission ?? true)
         }
       } catch (error) {
         console.error("Failed to load settings:", error)
@@ -159,6 +163,12 @@ export function Header({
                 </button>
               )}
             </div>
+
+            {/* 网站收录按钮 */}
+            {enableSubmission && (
+              <SiteSubmissionDialog categories={categories} />
+            )}
+
             <ThemeToggle />
           </div>
         </div>

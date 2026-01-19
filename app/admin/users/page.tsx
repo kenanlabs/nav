@@ -7,7 +7,6 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
-import { Separator } from "@/components/ui/separator"
 import { Loader2, Plus, Trash2 } from "lucide-react"
 import { getSystemSettings, updateSystemSettings } from "@/lib/actions"
 import { useToast } from "@/hooks/use-toast"
@@ -24,6 +23,8 @@ interface SystemSettingsData {
   footerLinks: Array<{ name: string; url: string }>
   showAdminLink: boolean
   enableVisitTracking: boolean
+  enableSubmission: boolean
+  submissionMaxPerDay: number
   githubUrl: string | undefined
   showIcp: boolean
   icpNumber: string | undefined
@@ -44,6 +45,8 @@ export default function AdminSettingsPage() {
     footerLinks: [],
     showAdminLink: true,
     enableVisitTracking: true,
+    enableSubmission: true,
+    submissionMaxPerDay: 3,
     githubUrl: undefined,
     showIcp: false,
     icpNumber: undefined,
@@ -68,6 +71,8 @@ export default function AdminSettingsPage() {
         showIcp: result.data.showIcp || false,
         icpNumber: result.data.icpNumber || undefined,
         icpLink: result.data.icpLink || undefined,
+        enableSubmission: result.data.enableSubmission ?? true,
+        submissionMaxPerDay: result.data.submissionMaxPerDay ?? 3,
       })
     }
   }
@@ -120,111 +125,172 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold">系统管理</h1>
-        <p className="text-muted-foreground">管理系统配置和网站设置</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">系统管理</h1>
+          <p className="text-muted-foreground">管理系统配置和网站设置</p>
+        </div>
+        <Button onClick={handleSaveSettings} disabled={savingSettings}>
+          {savingSettings && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+          保存设置
+        </Button>
       </div>
 
       {/* 系统设置 */}
-      <div className="space-y-4">
-        {/* 基本设置 */}
-        <Card>
-          <CardHeader>
-            <CardTitle>基本设置</CardTitle>
-            <CardDescription>配置网站基本信息</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="site-name">网站名称</Label>
-              <Input
-                id="site-name"
-                value={settings.siteName}
-                onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
-                placeholder="请输入网站名称"
-              />
-              <p className="text-sm text-muted-foreground">
-                显示在浏览器标签和页面标题中
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="site-description">网站描述</Label>
-              <Textarea
-                id="site-description"
-                value={settings.siteDescription}
-                onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
-                placeholder="请输入网站描述"
-                rows={3}
-              />
-              <p className="text-sm text-muted-foreground">
-                网站简介，有助于搜索引擎优化（SEO）
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="space-y-6">
+        {/* 第一行：基本设置 + 功能设置 */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* 基本设置 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>基本设置</CardTitle>
+              <CardDescription>配置网站基本信息</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="site-name">网站名称</Label>
+                <Input
+                  id="site-name"
+                  value={settings.siteName}
+                  onChange={(e) => setSettings({ ...settings, siteName: e.target.value })}
+                  placeholder="请输入网站名称"
+                />
+                <p className="text-sm text-muted-foreground">
+                  显示在浏览器标签和页面标题中
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="site-description">网站描述</Label>
+                <Textarea
+                  id="site-description"
+                  value={settings.siteDescription}
+                  onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
+                  placeholder="请输入网站描述"
+                  rows={3}
+                />
+                <p className="text-sm text-muted-foreground">
+                  网站简介，有助于搜索引擎优化（SEO）
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Separator />
+          {/* 功能设置 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>功能设置</CardTitle>
+              <CardDescription>启用或禁用系统功能</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label htmlFor="enable-tracking">启用访问统计</Label>
+                  <p className="text-sm text-muted-foreground">
+                    记录网站访问次数，用于数据统计
+                  </p>
+                </div>
+                <Switch
+                  id="enable-tracking"
+                  checked={settings.enableVisitTracking}
+                  onCheckedChange={(checked) => setSettings({ ...settings, enableVisitTracking: checked })}
+                />
+              </div>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="enable-submission">启用网站收录</Label>
+                    <p className="text-sm text-muted-foreground">
+                      允许访客提交网站收录申请，管理员审核后发布
+                    </p>
+                  </div>
+                  <Switch
+                    id="enable-submission"
+                    checked={settings.enableSubmission}
+                    onCheckedChange={(checked) => setSettings({ ...settings, enableSubmission: checked })}
+                  />
+                </div>
+                {settings.enableSubmission && (
+                  <div className="space-y-2">
+                    <Label htmlFor="submission-limit">每日提交限制</Label>
+                    <Input
+                      id="submission-limit"
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={settings.submissionMaxPerDay}
+                      onChange={(e) => setSettings({ ...settings, submissionMaxPerDay: parseInt(e.target.value) || 3 })}
+                      className="w-32"
+                    />
+                    <p className="text-sm text-muted-foreground">
+                      同一 IP 24 小时内最多可以提交 {settings.submissionMaxPerDay} 次网站收录申请
+                    </p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* 图片设置 */}
-        <Card>
-          <CardHeader>
-            <CardTitle>图片设置</CardTitle>
-            <CardDescription>设置网站 Logo 和 Favicon</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="site-logo">网站 Logo URL</Label>
-              <Input
-                id="site-logo"
-                value={settings.siteLogo || ""}
-                onChange={(e) => setSettings({ ...settings, siteLogo: e.target.value })}
-                placeholder="https://example.com/logo.png"
-              />
-              <p className="text-sm text-muted-foreground">
-                建议尺寸：200x60 像素，支持 PNG、JPG、SVG 格式
-              </p>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="favicon">Favicon URL</Label>
-              <Input
-                id="favicon"
-                value={settings.favicon || ""}
-                onChange={(e) => setSettings({ ...settings, favicon: e.target.value })}
-                placeholder="https://example.com/favicon.ico"
-              />
-              <p className="text-sm text-muted-foreground">
-                浏览器标签图标，建议尺寸：32x32 或 16x16 像素
-              </p>
-            </div>
-          </CardContent>
-        </Card>
+        {/* 第二行：图片设置 + 链接设置 */}
+        <div className="grid gap-6 md:grid-cols-2">
+          {/* 图片设置 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>图片设置</CardTitle>
+              <CardDescription>设置网站 Logo 和 Favicon</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="site-logo">网站 Logo URL</Label>
+                <Input
+                  id="site-logo"
+                  value={settings.siteLogo || ""}
+                  onChange={(e) => setSettings({ ...settings, siteLogo: e.target.value })}
+                  placeholder="https://example.com/logo.png"
+                />
+                <p className="text-sm text-muted-foreground">
+                  建议尺寸：200x60 像素，支持 PNG、JPG、SVG 格式
+                </p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="favicon">Favicon URL</Label>
+                <Input
+                  id="favicon"
+                  value={settings.favicon || ""}
+                  onChange={(e) => setSettings({ ...settings, favicon: e.target.value })}
+                  placeholder="https://example.com/favicon.ico"
+                />
+                <p className="text-sm text-muted-foreground">
+                  浏览器标签图标，建议尺寸：32x32 或 16x16 像素
+                </p>
+              </div>
+            </CardContent>
+          </Card>
 
-        <Separator />
+          {/* 链接设置 */}
+          <Card>
+            <CardHeader>
+              <CardTitle>链接设置</CardTitle>
+              <CardDescription>配置外部链接</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="github-url">GitHub 仓库地址</Label>
+                <Input
+                  id="github-url"
+                  value={settings.githubUrl || ""}
+                  onChange={(e) => setSettings({ ...settings, githubUrl: e.target.value })}
+                  placeholder="https://github.com/username/repo"
+                />
+                <p className="text-sm text-muted-foreground">
+                  将显示在登录页面底部，用于项目展示或源码分享
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* 链接设置 */}
-        <Card>
-          <CardHeader>
-            <CardTitle>链接设置</CardTitle>
-            <CardDescription>配置外部链接</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="github-url">GitHub 仓库地址</Label>
-              <Input
-                id="github-url"
-                value={settings.githubUrl || ""}
-                onChange={(e) => setSettings({ ...settings, githubUrl: e.target.value })}
-                placeholder="https://github.com/username/repo"
-              />
-              <p className="text-sm text-muted-foreground">
-                将显示在登录页面底部，用于项目展示或源码分享
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Separator />
-
-        {/* 底部设置 */}
+        {/* 第三行：底部设置（全宽，内容较多） */}
         <Card>
           <CardHeader>
             <CardTitle>底部设置</CardTitle>
@@ -270,7 +336,6 @@ export default function AdminSettingsPage() {
                 显示在页面底部的版权声明，支持 HTML 标签
               </p>
             </div>
-            <Separator />
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
@@ -314,7 +379,6 @@ export default function AdminSettingsPage() {
                 </>
               )}
             </div>
-            <Separator />
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <div>
@@ -354,38 +418,6 @@ export default function AdminSettingsPage() {
             </div>
           </CardContent>
         </Card>
-
-        <Separator />
-
-        {/* 功能设置 */}
-        <Card>
-          <CardHeader>
-            <CardTitle>功能设置</CardTitle>
-            <CardDescription>启用或禁用系统功能</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
-                <Label htmlFor="enable-tracking">启用访问统计</Label>
-                <p className="text-sm text-muted-foreground">
-                  记录网站访问次数，用于数据统计
-                </p>
-              </div>
-              <Switch
-                id="enable-tracking"
-                checked={settings.enableVisitTracking}
-                onCheckedChange={(checked) => setSettings({ ...settings, enableVisitTracking: checked })}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="flex justify-end">
-          <Button onClick={handleSaveSettings} disabled={savingSettings}>
-            {savingSettings && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            保存设置
-          </Button>
-        </div>
       </div>
     </div>
   )

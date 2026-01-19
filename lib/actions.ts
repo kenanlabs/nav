@@ -201,6 +201,8 @@ export async function getSitesWithPagination(params: {
   pageSize?: number
   categoryId?: string
   search?: string
+  isPublished?: boolean
+  submitterIp?: string
 }) {
   try {
     const page = params.page || 1
@@ -219,6 +221,16 @@ export async function getSitesWithPagination(params: {
         { description: { contains: params.search, mode: 'insensitive' } },
         { url: { contains: params.search, mode: 'insensitive' } },
       ]
+    }
+
+    if (params.isPublished !== undefined) {
+      where.isPublished = params.isPublished
+    }
+
+    if (params.submitterIp === "true") {
+      where.submitterIp = { not: null }
+    } else if (params.submitterIp === "false") {
+      where.submitterIp = null
     }
 
     const [sites, total] = await Promise.all([
@@ -250,6 +262,23 @@ export async function getSitesWithPagination(params: {
   }
 }
 
+export async function getCategoriesForFilter() {
+  try {
+    const categories = await prisma.category.findMany({
+      orderBy: [{ order: "asc" }, { name: "asc" }],
+      select: {
+        id: true,
+        name: true,
+      },
+    })
+
+    return { success: true, data: categories }
+  } catch (error) {
+    console.error("Error fetching categories:", error)
+    return { success: false, error: "Failed to fetch categories" }
+  }
+}
+
 export async function getSiteById(id: string) {
   try {
     const site = await prisma.site.findUnique({
@@ -273,6 +302,8 @@ export async function createSite(data: {
   url: string
   description: string
   iconUrl?: string
+  submitterContact?: string
+  submitterIp?: string
   categoryId: string
   isPublished?: boolean
   order?: number
@@ -284,6 +315,8 @@ export async function createSite(data: {
         url: data.url,
         description: data.description,
         iconUrl: data.iconUrl,
+        submitterContact: data.submitterContact,
+        submitterIp: data.submitterIp,
         categoryId: data.categoryId,
         isPublished: data.isPublished ?? false,
         order: data.order ?? 0,
@@ -307,6 +340,8 @@ export async function updateSite(id: string, data: {
   url?: string
   description?: string
   iconUrl?: string
+  submitterContact?: string
+  submitterIp?: string
   categoryId?: string
   isPublished?: boolean
   order?: number
@@ -537,6 +572,8 @@ export async function updateSystemSettings(data: {
   footerLinks?: Array<{ name: string; url: string }>
   showAdminLink?: boolean
   enableVisitTracking?: boolean
+  enableSubmission?: boolean
+  submissionMaxPerDay?: number
   githubUrl?: string
 }) {
   try {
@@ -959,5 +996,78 @@ export async function importBookmarks(
   } catch (error) {
     console.error("Error importing bookmarks:", error)
     return { success: false, error: "Failed to import bookmarks" }
+  }
+}
+
+// ==================== Site Submission ====================
+
+export async function submitSite(data: {
+  name: string
+  url: string
+  description: string
+  categoryId: string
+  submitterContact?: string
+  request?: Request
+}) {
+  try {
+    // 获取系统设置，检查是否启用收录功能
+    const settingsResult = await getSystemSettings()
+    if (!settingsResult.success || !settingsResult.data?.enableSubmission) {
+      return { success: false, error: "网站收录功能已关闭" }
+    }
+
+    // 获取 IP 地址
+    const ipAddress = data.request?.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+                     data.request?.headers.get('x-real-ip') ||
+                     'local'  // Fallback: 标记为本地提交
+
+    // IP 频率限制检查（仅对真实 IP 限制）
+    const maxPerDay = settingsResult.data.submissionMaxPerDay || 3
+    if (ipAddress && ipAddress !== 'local') {
+      const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000)
+      const recentSubmissions = await prisma.site.count({
+        where: {
+          submitterIp: ipAddress,
+          createdAt: { gte: oneDayAgo },
+        },
+      })
+
+      if (recentSubmissions >= maxPerDay) {
+        return {
+          success: false,
+          error: `提交太频繁啦！24小时内最多${maxPerDay}次，请明天再试🙅`
+        }
+      }
+    }
+
+    // 创建网站记录（默认未发布）
+    const site = await prisma.site.create({
+      data: {
+        name: data.name,
+        url: data.url,
+        description: data.description,
+        submitterContact: data.submitterContact || null,
+        submitterIp: ipAddress,  // 记录提交者 IP
+        categoryId: data.categoryId,
+        isPublished: false, // 默认待审核
+        order: 0,
+      },
+      include: {
+        category: true,
+      },
+    })
+
+    revalidatePath("/admin/sites")
+    revalidatePath("/")
+    revalidatePath(`/category/${site.category?.slug || ''}`)
+
+    return {
+      success: true,
+      data: site,
+      message: "提交成功！我们会尽快审核，感谢您的贡献"
+    }
+  } catch (error) {
+    console.error("Error submitting site:", error)
+    return { success: false, error: "提交失败，请稍后重试" }
   }
 }

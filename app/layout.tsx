@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster"
+import { Toaster as SonnerToaster } from "sonner"
 import { ThemeProvider } from "@/components/theme-provider/theme-provider"
 import { getSystemSettings } from "@/lib/actions"
 
@@ -37,6 +38,7 @@ export default function RootLayout({
         >
           {children}
           <Toaster />
+          <SonnerToaster position="bottom-right" richColors />
         </ThemeProvider>
       </body>
     </html>

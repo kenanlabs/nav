@@ -10,7 +10,10 @@
     "postinstall": "prisma generate",
     "db:push": "npx prisma db push && npm run db:seed",
     "db:seed": "npx tsx prisma/seed.ts",
-    "db:seed:full": "npx tsx prisma/seed.ts full"
+    "db:seed:full": "npx tsx prisma/seed.ts full",
+    "db:migrate:deploy": "npx prisma migrate deploy",
+    "db:migrate:dev": "npx prisma migrate dev",
+    "db:studio": "npx prisma studio"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
@@ -44,6 +47,7 @@
     "react-dom": "^19.2.3",
     "react-hook-form": "^7.69.0",
     "recharts": "^3.6.0",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^2.5.5",
     "transliteration": "^2.6.0",
     "tsx": "^4.21.0",
