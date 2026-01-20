@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { PoetryToggle } from "@/components/poetry-toggle"
 import { SiteSubmissionDialog } from "@/components/layout/site-submission-dialog"
@@ -192,8 +193,10 @@ export function Header({
 
           <div className="flex-shrink-0 pl-2 sm:pl-4 flex items-center gap-2">
             <div className="relative hidden sm:block">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+              <Label htmlFor="search" className="sr-only">搜索</Label>
+              <Search className="absolute top-1/2 left-2 size-4 -translate-y-1/2 opacity-50 pointer-events-none select-none" />
               <Input
+                id="search"
                 type="text"
                 placeholder="搜索..."
                 className="h-9 w-40 sm:w-48 lg:w-64 pl-8 pr-8 [&::-webkit-search-cancel-button]:hidden [&::-ms-clear]:hidden"
@@ -203,7 +206,7 @@ export function Header({
               {searchQuery && (
                 <button
                   onClick={handleClearSearch}
-                  className="absolute right-2.5 top-2.5 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute top-1/2 right-2 size-4 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   type="button"
                   aria-label="清除搜索"
                 >

@@ -109,8 +109,9 @@ export function Footer() {
 
   return (
     <footer className="w-full border-t bg-background px-4 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl py-6">
-        <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
+      <div className="mx-auto max-w-[1600px] w-full py-6">
+        <div className="lg:pr-36 lg:pl-2">
+          <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
           <div className="flex flex-col items-center space-y-1 sm:items-start">
             <p className="text-sm text-muted-foreground">
               {settings?.footerCopyright || getDefaultCopyright()}
@@ -162,6 +163,7 @@ export function Footer() {
             )}
           </div>
         </div>
+      </div>
       </div>
     </footer>
   )
