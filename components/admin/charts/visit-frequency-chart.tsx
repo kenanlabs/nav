@@ -29,7 +29,7 @@ interface VisitFrequencyChartProps {
     count: number
   }>
   timeRange: number
-  onTimeRangeChange: (days: number) => void
+  onTimeRangeChange: (days: 0 | 7 | 30 | 90) => void
 }
 
 export function VisitFrequencyChart({ data, timeRange, onTimeRangeChange }: VisitFrequencyChartProps) {
@@ -120,7 +120,7 @@ export function VisitFrequencyChart({ data, timeRange, onTimeRangeChange }: Visi
           <ToggleGroup
             type="single"
             value={timeRange.toString()}
-            onValueChange={(value) => value && onTimeRangeChange(Number(value))}
+            onValueChange={(value) => value && onTimeRangeChange(Number(value) as 0 | 7 | 30 | 90)}
             variant="outline"
             className="hidden md:flex"
           >
@@ -131,11 +131,10 @@ export function VisitFrequencyChart({ data, timeRange, onTimeRangeChange }: Visi
           </ToggleGroup>
           <Select
             value={timeRange.toString()}
-            onValueChange={(value) => onTimeRangeChange(Number(value))}
+            onValueChange={(value) => onTimeRangeChange(Number(value) as 0 | 7 | 30 | 90)}
           >
             <SelectTrigger
               className="flex w-32 md:hidden"
-              size="sm"
               aria-label="选择时间范围"
             >
               <SelectValue placeholder="选择时间范围" />
