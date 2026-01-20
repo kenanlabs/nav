@@ -91,7 +91,7 @@ export function AdminSidebar({ className }: SidebarProps) {
   }, [])
 
   return (
-    <div className={`flex h-screen w-64 flex-col border-r bg-background ${className || ""}`}>
+    <div className={`flex h-screen w-64 flex-col border-r bg-sidebar ${className || ""}`}>
       <div className="flex h-16 items-center border-b px-6">
         <Link href="/admin" className="flex items-center space-x-2">
           {siteLogo ? (

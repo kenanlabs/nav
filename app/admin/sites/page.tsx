@@ -38,7 +38,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, Pencil, Trash2, Power, Loader2, Filter } from "lucide-react"
+import { Plus, Pencil, Trash2, Power, Loader2 } from "lucide-react"
 import { SiteFormDialog } from "@/components/admin/site-form-dialog"
 import { getSitesWithPagination, deleteSite, toggleSitePublish, getCategoriesForFilter } from "@/lib/actions"
 import { useToast } from "@/hooks/use-toast"
@@ -237,11 +237,7 @@ title: "加载失败",
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">网站管理</h1>
-          <p className="text-muted-foreground">管理所有网站链接</p>
-        </div>
+      <div className="flex items-center justify-end">
         <Button onClick={handleCreate}>
           <Plus className="mr-2 h-4 w-4" />
           新增网站

@@ -1,7 +1,25 @@
 "use client"
 
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/components/ui/toggle-group"
 import { TrendingUp } from "lucide-react"
 import { useMemo } from "react"
 
@@ -11,9 +29,10 @@ interface VisitFrequencyChartProps {
     count: number
   }>
   timeRange: number
+  onTimeRangeChange: (days: number) => void
 }
 
-export function VisitFrequencyChart({ data, timeRange }: VisitFrequencyChartProps) {
+export function VisitFrequencyChart({ data, timeRange, onTimeRangeChange }: VisitFrequencyChartProps) {
   // 填充缺失的日期数据
   const displayData = useMemo(() => {
     if (timeRange === 0) {
@@ -51,7 +70,9 @@ export function VisitFrequencyChart({ data, timeRange }: VisitFrequencyChartProp
   // 格式化日期显示
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr)
-    return `${date.getMonth() + 1}/${date.getDate()}`
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    return month + "/" + day
   }
 
   // 格式化完整日期
@@ -62,7 +83,7 @@ export function VisitFrequencyChart({ data, timeRange }: VisitFrequencyChartProp
     const day = date.getDate()
     const weekDays = ['周日', '周一', '周二', '周三', '周四', '周五', '周六']
     const weekDay = weekDays[date.getDay()]
-    return `${year}年${month}月${day}日 ${weekDay}`
+    return year + "年" + month + "月" + day + "日 " + weekDay
   }
 
   // 计算总访问量
@@ -72,16 +93,61 @@ export function VisitFrequencyChart({ data, timeRange }: VisitFrequencyChartProp
   const maxCount = Math.max(...displayData.map(d => d.count), 0)
   const yAxisMax = maxCount > 0 ? Math.ceil(maxCount * 1.2) : 10 // 留20%空间，最小为10
 
+  // 获取时间范围标签
+  const getTimeRangeLabel = () => {
+    if (timeRange === 0) return "全部"
+    if (timeRange === 90) return "最近3个月"
+    if (timeRange === 30) return "最近1个月"
+    return "最近" + timeRange + "天"
+  }
+
   return (
-    <Card>
+    <Card className="@container/card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <TrendingUp className="h-5 w-5" />
           访问频次统计
         </CardTitle>
         <CardDescription>
-          {timeRange === 0 ? "全部" : `最近${timeRange}天`}共 {totalVisits.toLocaleString()} 次访问
+          <span className="hidden @[540px]/card:block">
+            {getTimeRangeLabel()}共 {totalVisits.toLocaleString()} 次访问
+          </span>
+          <span className="@[540px]/card:hidden">
+            {timeRange === 0 ? "全部" : (timeRange === 90 ? "3个月" : timeRange === 30 ? "1个月" : timeRange + "天")}
+          </span>
         </CardDescription>
+        <CardAction>
+          <ToggleGroup
+            type="single"
+            value={timeRange.toString()}
+            onValueChange={(value) => value && onTimeRangeChange(Number(value))}
+            variant="outline"
+            className="hidden md:flex"
+          >
+            <ToggleGroupItem value="0" className="rounded-r-none">全部</ToggleGroupItem>
+            <ToggleGroupItem value="90" className="rounded-none border-l-0">最近3个月</ToggleGroupItem>
+            <ToggleGroupItem value="30" className="rounded-none border-l-0">最近1个月</ToggleGroupItem>
+            <ToggleGroupItem value="7" className="rounded-l-none border-l-0">最近7天</ToggleGroupItem>
+          </ToggleGroup>
+          <Select
+            value={timeRange.toString()}
+            onValueChange={(value) => onTimeRangeChange(Number(value))}
+          >
+            <SelectTrigger
+              className="flex w-32 md:hidden"
+              size="sm"
+              aria-label="选择时间范围"
+            >
+              <SelectValue placeholder="选择时间范围" />
+            </SelectTrigger>
+            <SelectContent className="rounded-xl">
+              <SelectItem value="0" className="rounded-lg">全部</SelectItem>
+              <SelectItem value="90" className="rounded-lg">最近3个月</SelectItem>
+              <SelectItem value="30" className="rounded-lg">最近1个月</SelectItem>
+              <SelectItem value="7" className="rounded-lg">最近7天</SelectItem>
+            </SelectContent>
+          </Select>
+        </CardAction>
       </CardHeader>
       <CardContent>
         {displayData.length > 0 ? (
@@ -99,7 +165,7 @@ export function VisitFrequencyChart({ data, timeRange }: VisitFrequencyChartProp
                 stroke="hsl(var(--muted-foreground))"
                 fontSize={12}
                 tickFormatter={(value) => {
-                  if (value >= 1000) return `${(value / 1000).toFixed(1)}k`
+                  if (value >= 1000) return (value / 1000).toFixed(1) + "k"
                   return value.toString()
                 }}
               />
@@ -111,7 +177,7 @@ export function VisitFrequencyChart({ data, timeRange }: VisitFrequencyChartProp
                 }}
                 labelFormatter={(label) => formatFullDate(label)}
                 formatter={(value: number | undefined) => [
-                  value ? `${value} 次` : '0 次',
+                  value ? (value + " 次") : '0 次',
                   '访问量',
                 ]}
               />

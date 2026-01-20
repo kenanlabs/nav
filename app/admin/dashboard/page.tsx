@@ -12,7 +12,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { VisitFrequencyChart } from "@/components/admin/charts/visit-frequency-chart"
 
 interface VisitStats {
@@ -60,6 +59,8 @@ export default function AdminDashboardPage() {
   // 获取时间范围描述
   const getTimeRangeLabel = (days: TimeRange) => {
     if (days === 0) return "全部"
+    if (days === 90) return "最近3个月"
+    if (days === 30) return "最近1个月"
     return `最近${days}天`
   }
 
@@ -110,11 +111,6 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold">数据统计</h1>
-        <p className="text-muted-foreground">查看网站访问数据和统计信息</p>
-      </div>
-
       {/* 统计卡片 */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {siteStats.map((stat) => (
@@ -132,22 +128,6 @@ export default function AdminDashboardPage() {
             </CardContent>
           </Card>
         ))}
-      </div>
-
-      {/* 时间范围选择 */}
-      <div className="flex items-center gap-4">
-        <label className="text-sm font-medium">时间范围：</label>
-        <Select value={timeRange.toString()} onValueChange={(value) => setTimeRange(Number(value) as TimeRange)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="选择时间范围" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="0">全部</SelectItem>
-            <SelectItem value="7">最近7天</SelectItem>
-            <SelectItem value="30">最近30天</SelectItem>
-            <SelectItem value="90">最近90天</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {/* 访问排行 */}
@@ -218,6 +198,7 @@ export default function AdminDashboardPage() {
         <VisitFrequencyChart
           data={frequencyData.frequency || []}
           timeRange={timeRange}
+          onTimeRangeChange={setTimeRange}
         />
       )}
     </div>

@@ -17,11 +17,6 @@ export default function DataManagementPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-bold">数据管理</h1>
-        <p className="text-muted-foreground">导入浏览器书签、导出备份、数据迁移</p>
-      </div>
-
       <div className="grid gap-6 md:grid-cols-2">
         {/* 导入数据 - 主要操作 */}
         <Card className="border-primary/20 bg-primary/5">

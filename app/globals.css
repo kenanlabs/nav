@@ -32,6 +32,8 @@
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
     --radius: 0.5rem;
+    --sidebar: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 10%;
   }
 
   .dark {
@@ -54,6 +56,8 @@
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
+    --sidebar: 240 5.9% 8%;
+    --sidebar-foreground: 0 0% 98%;
   }
 }
 

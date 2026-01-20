@@ -125,11 +125,7 @@ export default function AdminSettingsPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">系统管理</h1>
-          <p className="text-muted-foreground">管理系统配置和网站设置</p>
-        </div>
+      <div className="flex items-center justify-end">
         <Button onClick={handleSaveSettings} disabled={savingSettings}>
           {savingSettings && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           保存设置
