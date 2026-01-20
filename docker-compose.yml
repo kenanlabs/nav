@@ -22,7 +22,7 @@ services:
 
   # Next.js 应用
   nav:
-    image: ghcr.io/01wanwu/nav:latest
+    image: ghcr.io/kenanlabs/nav:latest
     container_name: nav
     restart: unless-stopped
     ports:

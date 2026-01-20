@@ -33,7 +33,7 @@ export function PoetryToggle() {
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>显示古诗词 - 点击展开</p>
+          <p>显示古诗词</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

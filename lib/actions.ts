@@ -552,6 +552,8 @@ export async function getSystemSettings() {
           footerCopyright: `© ${new Date().getFullYear()} Conan Nav. All rights reserved.`,
         },
       })
+      // 重新获取以确保使用数据库默认值（siteName 等）
+      settings = await prisma.systemSettings.findFirst()
     }
 
     return { success: true, data: settings }

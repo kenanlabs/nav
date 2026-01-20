@@ -7,12 +7,15 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { PoetryToggle } from "@/components/poetry-toggle"
 import { SiteSubmissionDialog } from "@/components/layout/site-submission-dialog"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer"
+import { useMediaQuery } from "@/hooks/use-media-query"
 import { Search, Menu, X } from "lucide-react"
+import { logger } from "@/lib/logger"
 
 // 系统设置缓存类型
 interface SettingsCache {
@@ -48,13 +51,22 @@ export function Header({
 }: HeaderProps) {
   const [logo, setLogo] = useState<string | null>(siteLogo)
   const [enableSubmission, setEnableSubmission] = useState<boolean>(true)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
+  const isDesktop = useMediaQuery("(min-width: 768px)")
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    let cancelled = false
+
     async function loadSettings() {
       // 检查缓存
       const now = Date.now()
       if (settingsCache && (now - cacheTimestamp) < CACHE_DURATION) {
-        if (settingsCache.siteLogo) setLogo(settingsCache.siteLogo)
+        if (settingsCache.siteLogo && !cancelled) setLogo(settingsCache.siteLogo)
         return
       }
 
@@ -62,16 +74,36 @@ export function Header({
         const res = await fetch("/api/settings")
         if (res.ok) {
           const settings = await res.json()
-          settingsCache = settings
-          cacheTimestamp = now
-          if (settings.siteLogo) setLogo(settings.siteLogo)
-          setEnableSubmission(settings.enableSubmission ?? true)
+          if (!cancelled) {
+            settingsCache = settings
+            cacheTimestamp = now
+            if (settings.siteLogo) setLogo(settings.siteLogo)
+            setEnableSubmission(settings.enableSubmission ?? true)
+          }
         }
       } catch (error) {
-        console.error("Failed to load settings:", error)
+        if (!cancelled) {
+          logger.error("Failed to load settings:", error)
+        }
       }
     }
+
     loadSettings()
+
+    // 窗口焦点时检查缓存是否过期
+    const handleFocus = () => {
+      const now = Date.now()
+      if (!settingsCache || (now - cacheTimestamp) > CACHE_DURATION) {
+        loadSettings()
+      }
+    }
+
+    window.addEventListener('focus', handleFocus)
+
+    return () => {
+      cancelled = true
+      window.removeEventListener('focus', handleFocus)
+    }
   }, [])
 
   const handleClearSearch = () => {
@@ -102,46 +134,61 @@ export function Header({
             </Link>
           </div>
 
-          {/* 移动端下拉菜单 */}
-          <div className="md:hidden flex-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+          {/* 响应式导航：桌面端横向导航，移动端 Drawer */}
+          {!mounted ? (
+            // 占位符：保持布局稳定
+            <div className="flex-1" />
+          ) : isDesktop ? (
+            // 桌面端：Tabs 风格的横向导航
+            <nav className="flex flex-1 items-center overflow-x-auto overflow-y-hidden scrollbar-hide">
+              <div className="bg-muted inline-flex h-9 items-center justify-center rounded-lg p-[3px]">
+                {categories.map((category) => (
+                  <Link
+                    key={category.id}
+                    href={`/category/${category.slug}`}
+                    className={`inline-flex h-[calc(100%-1px)] items-center justify-center rounded-md px-3 text-sm font-medium whitespace-nowrap transition-[color,background-color,box-shadow] ${
+                      currentCategory === category.slug
+                        ? "bg-background text-foreground shadow-sm"
+                        : "text-muted-foreground hover:bg-accent/50"
+                    }`}
+                  >
+                    {category.name}
+                  </Link>
+                ))}
+              </div>
+            </nav>
+          ) : (
+            // 移动端：Drawer
+            <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <DrawerTrigger asChild>
                 <button className="flex items-center space-x-2 px-2 py-1.5 text-sm font-medium hover:bg-accent rounded-md transition-colors">
                   <Menu className="h-4 w-4" />
                   <span>分类</span>
                 </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="start" className="w-48">
-                {categories.map((category) => (
-                  <DropdownMenuItem key={category.id} asChild>
+              </DrawerTrigger>
+              <DrawerContent>
+                <DrawerHeader>
+                  <DrawerTitle>选择分类</DrawerTitle>
+                </DrawerHeader>
+                <div className="grid gap-1 px-4 pb-4">
+                  {categories.map((category) => (
                     <Link
+                      key={category.id}
                       href={`/category/${category.slug}`}
-                      className={currentCategory === category.slug ? "text-foreground" : "text-foreground/60"}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`block py-3 px-4 rounded-md transition-colors ${
+                        currentCategory === category.slug
+                          ? "bg-accent text-foreground"
+                          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                      }`}
                     >
                       {category.name}
                     </Link>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-
-          {/* 桌面端横向导航 */}
-          <nav className="hidden md:flex flex-1 items-center space-x-4 lg:space-x-6 text-sm font-medium overflow-x-auto overflow-y-hidden scrollbar-hide">
-            {categories.map((category) => (
-              <Link
-                key={category.id}
-                href={`/category/${category.slug}`}
-                className={`transition-colors hover:text-foreground/80 whitespace-nowrap ${
-                  currentCategory === category.slug
-                    ? "text-foreground"
-                    : "text-foreground/60"
-                }`}
-              >
-                {category.name}
-              </Link>
-            ))}
-          </nav>
+                  ))}
+                </div>
+              </DrawerContent>
+            </Drawer>
+          )}
 
           <div className="flex-shrink-0 pl-2 sm:pl-4 flex items-center gap-2">
             <div className="relative hidden sm:block">

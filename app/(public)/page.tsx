@@ -1,6 +1,5 @@
 import { SearchableLayout } from "@/components/layout/searchable-layout"
 import { SiteCard } from "@/components/layout/site-card"
-import { JinrishiciCardWrapper } from "@/components/layout/jinrishici-card-wrapper"
 import { getAllCategories, getCategories, getSystemSettings, getSites } from "@/lib/actions"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
@@ -25,10 +24,7 @@ export default async function HomePage() {
       flatSites={flatSites}
       siteName={settings?.siteName}
     >
-      {/* 今日诗词 - 固定在右上角，根据用户设置显示/隐藏 */}
-      <JinrishiciCardWrapper />
-
-      <div className="space-y-12 lg:pr-36 lg:pl-2">
+      <div className="space-y-12">
         {/* 分类内容 */}
         {categories && categories.length > 0 ? (
           <>

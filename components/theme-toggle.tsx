@@ -72,7 +72,7 @@ export function ThemeToggle() {
           </Button>
         </TooltipTrigger>
         <TooltipContent>
-          <p>{getThemeLabel()} - 点击切换</p>
+          <p>{getThemeLabel()}</p>
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

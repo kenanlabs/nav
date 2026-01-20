@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { Separator } from "@/components/ui/separator"
+import { logger } from "@/lib/logger"
 
 // 系统设置缓存类型
 interface SettingsCache {
@@ -37,29 +38,14 @@ export function Footer() {
   } | null>(null)
 
   useEffect(() => {
+    let cancelled = false
+
     async function loadSettings() {
       // 检查缓存
       const now = Date.now()
       if (settingsCache && (now - cacheTimestamp) < CACHE_DURATION) {
-        const data = settingsCache
-        setSettings({
-          showFooter: data.showFooter ?? true,
-          footerCopyright: data.footerCopyright || getDefaultCopyright(),
-          footerLinks: data.footerLinks || [],
-          showAdminLink: data.showAdminLink ?? true,
-          showIcp: data.showIcp ?? false,
-          icpNumber: data.icpNumber || null,
-          icpLink: data.icpLink || null,
-        })
-        return
-      }
-
-      try {
-        const res = await fetch("/api/settings")
-        if (res.ok) {
-          const data = await res.json()
-          settingsCache = data
-          cacheTimestamp = now
+        if (!cancelled) {
+          const data = settingsCache
           setSettings({
             showFooter: data.showFooter ?? true,
             footerCopyright: data.footerCopyright || getDefaultCopyright(),
@@ -70,11 +56,50 @@ export function Footer() {
             icpLink: data.icpLink || null,
           })
         }
+        return
+      }
+
+      try {
+        const res = await fetch("/api/settings")
+        if (res.ok) {
+          const data = await res.json()
+          if (!cancelled) {
+            settingsCache = data
+            cacheTimestamp = now
+            setSettings({
+              showFooter: data.showFooter ?? true,
+              footerCopyright: data.footerCopyright || getDefaultCopyright(),
+              footerLinks: data.footerLinks || [],
+              showAdminLink: data.showAdminLink ?? true,
+              showIcp: data.showIcp ?? false,
+              icpNumber: data.icpNumber || null,
+              icpLink: data.icpLink || null,
+            })
+          }
+        }
       } catch (error) {
-        console.error("Failed to load settings:", error)
+        if (!cancelled) {
+          logger.error("Failed to load settings:", error)
+        }
       }
     }
+
     loadSettings()
+
+    // 窗口焦点时检查缓存是否过期
+    const handleFocus = () => {
+      const now = Date.now()
+      if (!settingsCache || (now - cacheTimestamp) > CACHE_DURATION) {
+        loadSettings()
+      }
+    }
+
+    window.addEventListener('focus', handleFocus)
+
+    return () => {
+      cancelled = true
+      window.removeEventListener('focus', handleFocus)
+    }
   }, [])
 
   // 如果设置为不显示底部，返回 null

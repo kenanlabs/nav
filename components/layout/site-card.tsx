@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect, useRef } from "react"
 import Link from "next/link"
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardHeader, CardTitle, CardDescription, CardAction } from "@/components/ui/card"
 import { ExternalLink } from "lucide-react"
 
 // 生成首字母图标（shadcn/ui 简洁风格）
@@ -97,13 +97,11 @@ export function SiteCard({ site }: SiteCardProps) {
       aria-label={`访问 ${site.name}`}
       className="group block"
     >
-      <Card className="relative h-full transition-colors hover:bg-muted">
-        {/* 右上角外部链接图标（悬停时显示） */}
-        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-          <ExternalLink className="h-4 w-4 text-muted-foreground" />
-        </div>
-
-        <CardHeader className="h-full flex flex-col justify-center">
+      <Card className="h-full transition-colors hover:bg-muted">
+        <CardHeader>
+          <CardAction>
+            <ExternalLink className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+          </CardAction>
           <div className="flex items-center space-x-3">
             {iconSrc && imageLoaded ? (
               <img

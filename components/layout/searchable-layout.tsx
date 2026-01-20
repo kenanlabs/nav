@@ -4,6 +4,7 @@ import { useState, useMemo } from "react"
 import { ScrollHeader } from "./scroll-header"
 import { Footer } from "./footer"
 import { SiteCard } from "./site-card"
+import { JinrishiciCardWrapper } from "./jinrishici-card-wrapper"
 import { Badge } from "@/components/ui/badge"
 
 interface Site {
@@ -63,38 +64,44 @@ export function SearchableLayout({
 
       <main className="flex-1 px-4 sm:px-6 lg:px-8 py-8">
         <div className="mx-auto max-w-[1600px] w-full">
-          {isSearching ? (
-            // 搜索结果
-            <>
-              <div className="mb-8 flex items-center gap-3">
-                <h1 className="text-3xl font-bold tracking-tight">搜索结果</h1>
-                <Badge variant="secondary" className="text-sm">
-                  {filteredSites.length}
-                </Badge>
-                <p className="text-muted-foreground">
-                  关键词：<span className="font-semibold text-foreground">「{searchQuery}」</span>
-                </p>
-              </div>
+          {/* 今日诗词 - 固定在右上角，根据用户设置显示/隐藏 */}
+          <JinrishiciCardWrapper />
 
-              {filteredSites.length === 0 ? (
-                <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed">
-                  <p className="text-lg text-muted-foreground">未找到匹配的网站</p>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    请尝试其他关键词
+          {/* 内容区域：为诗词卡片预留右侧空间 */}
+          <div className="lg:pr-36 lg:pl-2">
+            {isSearching ? (
+              // 搜索结果
+              <>
+                <div className="mb-8 flex items-center gap-3">
+                  <h1 className="text-3xl font-bold tracking-tight">搜索结果</h1>
+                  <Badge variant="secondary" className="text-sm">
+                    {filteredSites.length}
+                  </Badge>
+                  <p className="text-muted-foreground">
+                    关键词：<span className="font-semibold text-foreground">「{searchQuery}」</span>
                   </p>
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {filteredSites.map((site) => (
-                    <SiteCard key={site.id} site={site} />
-                  ))}
-                </div>
-              )}
-            </>
-          ) : (
-            // 页面内容（由父组件传入）
-            children
-          )}
+
+                {filteredSites.length === 0 ? (
+                  <div className="flex min-h-[400px] flex-col items-center justify-center rounded-lg border border-dashed">
+                    <p className="text-lg text-muted-foreground">未找到匹配的网站</p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      请尝试其他关键词
+                    </p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                    {filteredSites.map((site) => (
+                      <SiteCard key={site.id} site={site} />
+                    ))}
+                  </div>
+                )}
+              </>
+            ) : (
+              // 页面内容（由父组件传入）
+              children
+            )}
+          </div>
         </div>
       </main>
 
