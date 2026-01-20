@@ -138,13 +138,18 @@ export function JinrishiciCard({ onClose }: JinrishiciCardProps) {
         </div>
       )}
 
-      <CardContent className="px-8">
+      <CardContent className="px-8 flex justify-center">
         {/* 竖向排列容器：从右到左 */}
         <div
           className="font-lxgw-wenkai text-foreground"
           style={{
+            width: '5em',
+            minWidth: '5em',
+            maxWidth: '5em',
             writingMode: 'vertical-rl',
+            WebkitWritingMode: 'vertical-rl',
             textOrientation: 'upright',
+            WebkitTextOrientation: 'upright',
             height: 'auto',
             minHeight: '200px',
             letterSpacing: '0.2em',

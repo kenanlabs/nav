@@ -54,7 +54,7 @@
   </tr>
   <tr>
     <td><img src="screenshots/03-dashboard.png" alt="仪表盘" /></td>
-    <td><img src="screenshots/04-editor.png" alt="编辑管理员信息" /></td>
+    <td><img src="screenshots/04-data.png" alt="编辑管理员信息" /></td>
   </tr>
   <tr>
     <td><img src="screenshots/05-sites.png" alt="网站管理" /></td>
