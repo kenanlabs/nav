@@ -1,5 +1,10 @@
 -- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('ADMIN');
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'UserRole') THEN
+        CREATE TYPE "UserRole" AS ENUM ('ADMIN');
+    END IF;
+END $$;
 
 -- CreateTable
 CREATE TABLE IF NOT EXISTS "Category" (
