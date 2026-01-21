@@ -10,10 +10,12 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Moon, Sun, Laptop } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
 export function ThemeToggle() {
   const { setTheme, theme, resolvedTheme } = useTheme()
   const [mounted, setMounted] = React.useState(false)
+  const { toast } = useToast()
 
   React.useEffect(() => {
     setMounted(true)
@@ -21,13 +23,32 @@ export function ThemeToggle() {
 
   // 循环切换：浅色 → 深色 → 跟随系统 → 浅色 ...
   const cycleTheme = () => {
+    const currentTheme = theme || "system"
+    let nextTheme: string = ""
+
     if (theme === "light") {
+      nextTheme = "dark"
       setTheme("dark")
     } else if (theme === "dark") {
+      nextTheme = "system"
       setTheme("system")
     } else {
+      nextTheme = "light"
       setTheme("light")
     }
+
+    // 获取主题名称
+    const getThemeName = (t: string) => {
+      if (t === "system") return "跟随系统"
+      if (t === "light") return "浅色模式"
+      return "深色模式"
+    }
+
+    // 显示提示
+    toast({
+      title: "换个氛围",
+      description: `${getThemeName(currentTheme)} → ${getThemeName(nextTheme)}`,
+    })
   }
 
   // 获取当前主题的显示名称

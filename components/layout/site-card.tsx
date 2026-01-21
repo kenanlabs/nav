@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef } from "react"
 import Link from "next/link"
 import { Card, CardHeader, CardTitle, CardDescription, CardAction } from "@/components/ui/card"
 import { ExternalLink } from "lucide-react"
+import { useFaviconService, getFaviconUrl } from "@/hooks/use-favicon-service"
 
 // 生成首字母图标（shadcn/ui 简洁风格）
 function getInitialIcon(name: string) {
@@ -43,24 +44,30 @@ interface SiteCardProps {
 export function SiteCard({ site }: SiteCardProps) {
   const [imageLoaded, setImageLoaded] = useState(false)
   const hasTriedLoad = useRef(false)
+  const { service } = useFaviconService()
 
   // 使用 useMemo 优化 favicon URL 计算
-  // 优先级：用户配置 > DuckDuckGo（在中国可访问）
+  // 优先级：用户配置 > 选中的 Favicon 服务
   const iconSrc = useMemo(() => {
     if (site.iconUrl) return site.iconUrl
 
     try {
       const domain = new URL(site.url).hostname
-      // 使用 DuckDuckGo Favicon API（在中国可访问）
-      // DuckDuckGo 会自动解析 HTML meta 标签，比直接找 /favicon.ico 更准确
-      return `https://icons.duckduckgo.com/ip3/${domain}.ico`
+      // 使用选中的 Favicon 服务
+      return getFaviconUrl(domain, service)
     } catch {
       return null
     }
-  }, [site.iconUrl, site.url])
+  }, [site.iconUrl, site.url, service])
 
   // 计算首字母图标（作为 fallback）
   const initial = useMemo(() => getInitialIcon(site.name), [site.name])
+
+  // 当服务切换时，重置加载状态
+  useEffect(() => {
+    setImageLoaded(false)
+    hasTriedLoad.current = false
+  }, [iconSrc])
 
   // 使用 useEffect + new Image() 预加载图片
   useEffect(() => {

@@ -41,7 +41,7 @@
 - **生产环境优化** - 统一日志管理，生产环境静默
 - **数据可视化** - 使用 Recharts 展示访问频次统计
 - **性能优化** - 数据库索引优化，客户端实时搜索（< 10ms 响应）
-- **智能图标** - 用户配置 > DuckDuckGo Favicon > 首字母图标（优雅降级）
+- **智能图标** - 用户配置 > 智能 Favicon > 首字母图标（优雅降级）
 - **ICP备案支持** - 前台底部可配置显示 ICP 备案号和链接
 - **shadcn/ui 最佳实践** - 完整的组件组合模式（Card + CardHeader + CardTitle + CardAction）
 
@@ -360,10 +360,10 @@ docker run --rm -v nav_postgresql_data:/data -v $(pwd):/backup ubuntu tar czf /b
 
 ```bash
 # Docker 环境
-docker compose exec postgresql psql -U nav nav < backup_20250119_143000.sql
+docker compose exec postgresql psql -U nav nav < backup_20260121_143000.sql
 
 # npm 环境
-psql -h localhost -U nav nav < backup_20250119_143000.sql
+psql -h localhost -U nav nav < backup_20260121_143000.sql
 ```
 
 #### 备份策略建议

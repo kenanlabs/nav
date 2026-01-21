@@ -2,7 +2,7 @@
 CREATE TYPE "UserRole" AS ENUM ('ADMIN');
 
 -- CreateTable
-CREATE TABLE "Category" (
+CREATE TABLE IF NOT EXISTS "Category" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "slug" TEXT NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE "Category" (
 );
 
 -- CreateTable
-CREATE TABLE "Site" (
+CREATE TABLE IF NOT EXISTS "Site" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "url" TEXT NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE "Site" (
 );
 
 -- CreateTable
-CREATE TABLE "User" (
+CREATE TABLE IF NOT EXISTS "User" (
     "id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "password" TEXT NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE "User" (
 );
 
 -- CreateTable
-CREATE TABLE "SystemSettings" (
+CREATE TABLE IF NOT EXISTS "SystemSettings" (
     "id" TEXT NOT NULL DEFAULT 'default',
     "site_name" TEXT NOT NULL DEFAULT 'Conan Nav',
     "site_description" TEXT NOT NULL DEFAULT '简洁现代化的网址导航系统',
@@ -67,7 +67,7 @@ CREATE TABLE "SystemSettings" (
 );
 
 -- CreateTable
-CREATE TABLE "Visit" (
+CREATE TABLE IF NOT EXISTS "Visit" (
     "id" TEXT NOT NULL,
     "siteId" TEXT NOT NULL,
     "ipAddress" TEXT,
@@ -79,34 +79,47 @@ CREATE TABLE "Visit" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Category_slug_key" ON "Category"("slug");
+CREATE UNIQUE INDEX IF NOT EXISTS "Category_slug_key" ON "Category"("slug");
 
 -- CreateIndex
-CREATE INDEX "Site_categoryId_idx" ON "Site"("categoryId");
+CREATE INDEX IF NOT EXISTS "Site_categoryId_idx" ON "Site"("categoryId");
 
 -- CreateIndex
-CREATE INDEX "Site_isPublished_idx" ON "Site"("isPublished");
+CREATE INDEX IF NOT EXISTS "Site_isPublished_idx" ON "Site"("isPublished");
 
 -- CreateIndex
-CREATE INDEX "Site_categoryId_isPublished_idx" ON "Site"("categoryId", "isPublished");
+CREATE INDEX IF NOT EXISTS "Site_categoryId_isPublished_idx" ON "Site"("categoryId", "isPublished");
 
 -- CreateIndex
-CREATE INDEX "Site_order_idx" ON "Site"("order");
+CREATE INDEX IF NOT EXISTS "Site_order_idx" ON "Site"("order");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE INDEX "Visit_siteId_idx" ON "Visit"("siteId");
+CREATE INDEX IF NOT EXISTS "Visit_siteId_idx" ON "Visit"("siteId");
 
 -- CreateIndex
-CREATE INDEX "Visit_visitedAt_idx" ON "Visit"("visitedAt");
+CREATE INDEX IF NOT EXISTS "Visit_visitedAt_idx" ON "Visit"("visitedAt");
 
 -- CreateIndex
-CREATE INDEX "Visit_siteId_visitedAt_idx" ON "Visit"("siteId", "visitedAt");
+CREATE INDEX IF NOT EXISTS "Visit_siteId_visitedAt_idx" ON "Visit"("siteId", "visitedAt");
 
--- AddForeignKey
-ALTER TABLE "Site" ADD CONSTRAINT "Site_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+-- AddForeignKey (使用 DO 块避免重复添加约束时报错)
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'Site_categoryId_fkey'
+    ) THEN
+        ALTER TABLE "Site" ADD CONSTRAINT "Site_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Category"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;
 
--- AddForeignKey
-ALTER TABLE "Visit" ADD CONSTRAINT "Visit_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+DO $$
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_constraint WHERE conname = 'Visit_siteId_fkey'
+    ) THEN
+        ALTER TABLE "Visit" ADD CONSTRAINT "Visit_siteId_fkey" FOREIGN KEY ("siteId") REFERENCES "Site"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+    END IF;
+END $$;

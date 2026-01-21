@@ -424,7 +424,7 @@ export default function AdminLoginPage() {
 
       {/* 移动端单列布局 */}
       {!mounted ? null : (
-        <div className="flex w-full max-w-md px-4 md:hidden">
+        <div className="flex w-full max-w-md px-4 mx-auto md:hidden">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-2 text-center">
               <div className="flex items-center justify-center text-lg font-medium">

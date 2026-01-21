@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { PoetryToggle } from "@/components/poetry-toggle"
+import { FaviconServiceToggle } from "@/components/favicon-service-toggle"
 import { SiteSubmissionDialog } from "@/components/layout/site-submission-dialog"
 import {
   Drawer,
@@ -202,6 +203,7 @@ export function Header({
                 className="h-9 w-40 sm:w-48 lg:w-64 pl-8 pr-8 [&::-webkit-search-cancel-button]:hidden [&::-ms-clear]:hidden"
                 value={searchQuery}
                 onChange={(e) => onSearchChange?.(e.target.value)}
+                suppressHydrationWarning
               />
               {searchQuery && (
                 <button
@@ -220,6 +222,7 @@ export function Header({
               <SiteSubmissionDialog categories={categories} />
             )}
 
+            <FaviconServiceToggle />
             <PoetryToggle />
             <ThemeToggle />
           </div>
