@@ -12,7 +12,6 @@ import {
   FolderKanban,
   Users,
   Database,
-  LogOut,
 } from "lucide-react"
 
 // 系统设置缓存类型
@@ -25,6 +24,9 @@ interface SettingsCache {
 let settingsCache: SettingsCache | null = null
 let cacheTimestamp = 0
 const CACHE_DURATION = 5 * 60 * 1000 // 5分钟缓存
+
+// localStorage key
+const SIDEBAR_COLLAPSED_KEY = "admin-sidebar-collapsed"
 
 const navItems = [
   {
@@ -63,6 +65,22 @@ export function AdminSidebar({ className }: SidebarProps) {
   const router = useRouter()
   const [siteName, setSiteName] = useState("Conan Nav")
   const [siteLogo, setSiteLogo] = useState<string | null>(null)
+  const [collapsed, setCollapsed] = useState(false)
+
+  // 从 localStorage 加载折叠状态
+  useEffect(() => {
+    const savedCollapsed = localStorage.getItem(SIDEBAR_COLLAPSED_KEY)
+    if (savedCollapsed !== null) {
+      setCollapsed(JSON.parse(savedCollapsed))
+    }
+  }, [])
+
+  // 保存折叠状态到 localStorage
+  const handleToggleCollapse = () => {
+    const newCollapsed = !collapsed
+    setCollapsed(newCollapsed)
+    localStorage.setItem(SIDEBAR_COLLAPSED_KEY, JSON.stringify(newCollapsed))
+  }
 
   useEffect(() => {
     async function loadSettings() {
@@ -91,14 +109,40 @@ export function AdminSidebar({ className }: SidebarProps) {
   }, [])
 
   return (
-    <div className={`flex h-screen w-64 flex-col border-r bg-sidebar ${className || ""}`}>
-      <div className="flex h-16 items-center border-b px-6">
+    <div className={`flex h-screen flex-col border-r bg-sidebar transition-all duration-300 ${
+      collapsed ? "w-16" : "w-64"
+    } ${className || ""}`}>
+      <div className="flex h-16 items-center justify-between border-b px-3">
         <Link href="/admin" className="flex items-center space-x-2">
-          {siteLogo ? (
-            <img src={siteLogo} alt="Logo" className="h-6 w-6 object-contain" />
-          ) : null}
-          <span className="text-lg font-bold">{siteName} Admin</span>
+          {!collapsed && (
+            <span className="text-lg font-bold">{siteName}</span>
+          )}
         </Link>
+        {/* Logo 图标作为收起/展开按钮 */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className={collapsed ? "text-foreground" : "text-muted-foreground hover:bg-accent"}
+          onClick={handleToggleCollapse}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <path d="M9 3v18" />
+          </svg>
+          <span className="sr-only">
+            {collapsed ? "展开侧边栏" : "收起侧边栏"}
+          </span>
+        </Button>
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
@@ -110,10 +154,10 @@ export function AdminSidebar({ className }: SidebarProps) {
             <Link key={item.href} href={item.href}>
               <Button
                 variant={isActive ? "secondary" : "ghost"}
-                className="w-full justify-start"
+                className={`w-full ${collapsed ? 'justify-center' : 'justify-start'}`}
               >
-                <Icon className="mr-2 h-4 w-4" />
-                {item.title}
+                <Icon className="h-4 w-4" />
+                {!collapsed && <span className="ml-2">{item.title}</span>}
               </Button>
             </Link>
           )
@@ -122,30 +166,8 @@ export function AdminSidebar({ className }: SidebarProps) {
 
       <Separator />
 
-      <div className="p-3 space-y-2">
-        <AdminAvatar />
-
-        {/* 退出登录按钮 */}
-        <Button
-          variant="ghost"
-          className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10"
-          onClick={async () => {
-            try {
-              // 清除用户缓存
-              clearUserCache()
-              // 调用退出 API
-              await fetch("/api/admin/logout", { method: "POST", credentials: "include" })
-              // 跳转到登录页
-              router.push("/admin/login")
-              router.refresh()
-            } catch (error) {
-              console.error("Logout error:", error)
-            }
-          }}
-        >
-          <LogOut className="mr-2 h-4 w-4" />
-          退出登录
-        </Button>
+      <div className="p-3">
+        <AdminAvatar collapsed={collapsed} />
       </div>
     </div>
   )

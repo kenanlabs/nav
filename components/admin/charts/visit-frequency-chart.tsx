@@ -124,10 +124,10 @@ export function VisitFrequencyChart({ data, timeRange, onTimeRangeChange }: Visi
             variant="outline"
             className="hidden md:flex"
           >
-            <ToggleGroupItem value="0" className="rounded-r-none">全部</ToggleGroupItem>
-            <ToggleGroupItem value="90" className="rounded-none border-l-0">最近3个月</ToggleGroupItem>
-            <ToggleGroupItem value="30" className="rounded-none border-l-0">最近1个月</ToggleGroupItem>
-            <ToggleGroupItem value="7" className="rounded-l-none border-l-0">最近7天</ToggleGroupItem>
+            <ToggleGroupItem value="7" className="rounded-r-none">Last 7 days</ToggleGroupItem>
+            <ToggleGroupItem value="30" className="rounded-none border-l-0">Last 30 days</ToggleGroupItem>
+            <ToggleGroupItem value="90" className="rounded-none border-l-0">Last 3 months</ToggleGroupItem>
+            <ToggleGroupItem value="0" className="rounded-l-none border-l-0">All</ToggleGroupItem>
           </ToggleGroup>
           <Select
             value={timeRange.toString()}
@@ -140,10 +140,10 @@ export function VisitFrequencyChart({ data, timeRange, onTimeRangeChange }: Visi
               <SelectValue placeholder="选择时间范围" />
             </SelectTrigger>
             <SelectContent className="rounded-xl">
-              <SelectItem value="0" className="rounded-lg">全部</SelectItem>
-              <SelectItem value="90" className="rounded-lg">最近3个月</SelectItem>
-              <SelectItem value="30" className="rounded-lg">最近1个月</SelectItem>
-              <SelectItem value="7" className="rounded-lg">最近7天</SelectItem>
+              <SelectItem value="7" className="rounded-lg">Last 7 days</SelectItem>
+              <SelectItem value="30" className="rounded-lg">Last 30 days</SelectItem>
+              <SelectItem value="90" className="rounded-lg">Last 3 months</SelectItem>
+              <SelectItem value="0" className="rounded-lg">All</SelectItem>
             </SelectContent>
           </Select>
         </CardAction>

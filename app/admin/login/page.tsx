@@ -10,6 +10,9 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Separator } from "@/components/ui/separator"
+import { Loader2 } from "lucide-react"
 import { logger } from "@/lib/logger"
 
 // 系统设置缓存类型
@@ -34,6 +37,7 @@ export default function AdminLoginPage() {
   const [siteDescription, setSiteDescription] = useState("简洁现代化的网址导航系统")
   const [githubUrl, setGithubUrl] = useState<string | null>(null)
   const [mounted, setMounted] = useState(false)
+  const [settingsLoaded, setSettingsLoaded] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -64,11 +68,13 @@ export default function AdminLoginPage() {
             if (settings.siteName) setSiteName(settings.siteName)
             if (settings.siteDescription) setSiteDescription(settings.siteDescription)
             if (settings.githubUrl) setGithubUrl(settings.githubUrl)
+            setSettingsLoaded(true)
           }
         }
       } catch (error) {
         if (!cancelled) {
           logger.error("Failed to load settings:", error)
+          setSettingsLoaded(true)
         }
       }
     }
@@ -119,11 +125,11 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center bg-muted/40">
+    <div className="relative flex min-h-screen w-full flex-col items-center justify-center bg-muted/40">
       {/* 桌面端两列布局 */}
-      <div className="relative hidden w-full flex-1 shrink-0 items-center justify-center md:grid lg:grid-cols-2">
+      <div className="relative hidden w-full md:grid lg:grid-cols-2">
         {/* 左侧列 - 高级设计感背景 */}
-        <div className="relative hidden h-full flex-col p-10 lg:flex overflow-hidden bg-gradient-to-br from-primary/10 via-background to-background">
+        <div className="relative hidden h-full min-h-screen flex-col p-10 lg:flex overflow-hidden bg-gradient-to-br from-primary/10 via-background to-background">
           {/* 背景网格图案 */}
           <div
             className="absolute inset-0 opacity-[0.03]"
@@ -338,18 +344,6 @@ export default function AdminLoginPage() {
 
             {/* 底部信息 */}
             <div className="flex items-center justify-between">
-              {githubUrl && (
-                <a
-                  href={githubUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group text-muted-foreground inline-flex items-center gap-2 text-sm transition-all hover:text-primary"
-                >
-                  <Github className="size-4 transition-transform group-hover:scale-110" />
-                  <span>Star on GitHub</span>
-                  <ArrowRight className="size-3 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
-                </a>
-              )}
               <p className="text-muted-foreground/50 text-xs">
                 © {new Date().getFullYear()} {siteName}
               </p>
@@ -361,73 +355,11 @@ export default function AdminLoginPage() {
         </div>
 
         {/* 右侧列 - 登录表单 */}
-        <div className="flex items-center justify-center lg:h-[800px] lg:p-8">
-          <div className="mx-auto flex w-full flex-col justify-center gap-6 sm:w-[350px]">
-            <div className="flex flex-col gap-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">
-                管理员登录
-              </h1>
-              <p className="text-muted-foreground text-sm">
-                输入您的账号和密码登录管理后台
-              </p>
-            </div>
-
-            <form onSubmit={handleSubmit}>
-              <FieldGroup>
-                {error && (
-                  <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-                    {error}
-                  </div>
-                )}
-                <Field>
-                  <FieldLabel className="sr-only" htmlFor="email">
-                    邮箱
-                  </FieldLabel>
-                  <Input
-                    id="email"
-                    placeholder="name@example.com"
-                    type="email"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    autoCorrect="off"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={loading}
-                    required
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel className="sr-only" htmlFor="password">
-                    密码
-                  </FieldLabel>
-                  <Input
-                    id="password"
-                    placeholder="••••••••"
-                    type="password"
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
-                    required
-                  />
-                </Field>
-                <Field>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "登录中..." : "登录"}
-                  </Button>
-                </Field>
-              </FieldGroup>
-            </form>
-          </div>
-        </div>
-      </div>
-
-      {/* 移动端单列布局 */}
-      {!mounted ? null : (
-        <div className="flex w-full max-w-md px-4 mx-auto md:hidden">
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-2 text-center">
-              <div className="flex items-center justify-center text-lg font-medium">
+        <div className="flex items-center justify-center lg:min-h-screen lg:p-8 bg-background/50">
+          <div className="mx-auto w-full max-w-[400px] px-6">
+            {/* 品牌区域 */}
+            <div className="mb-8 text-center">
+              <div className="mb-4 flex justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -436,65 +368,192 @@ export default function AdminLoginPage() {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="mr-2 h-6 w-6"
+                  className="h-12 w-12 text-primary"
                 >
                   <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
                 </svg>
-                {siteName}
               </div>
-              <h1 className="text-2xl font-semibold tracking-tight">
-                管理员登录
-              </h1>
-              <p className="text-muted-foreground text-sm">
-                {siteDescription}
+              <p className="mt-2 text-muted-foreground">
+                登录以管理您的导航站点
               </p>
             </div>
 
-            <form onSubmit={handleSubmit}>
-              <FieldGroup>
-                {error && (
-                  <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-                    {error}
-                  </div>
-                )}
-                <Field>
-                  <FieldLabel htmlFor="email">邮箱</FieldLabel>
-                  <Input
-                    id="email"
-                    placeholder="name@example.com"
-                    type="email"
-                    autoCapitalize="none"
-                    autoComplete="email"
-                    autoCorrect="off"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    disabled={loading}
-                    required
-                  />
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="password">密码</FieldLabel>
-                  <Input
-                    id="password"
-                    placeholder="••••••••"
-                    type="password"
-                    autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    disabled={loading}
-                    required
-                  />
-                </Field>
-                <Field>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? "登录中..." : "登录"}
-                  </Button>
-                </Field>
-              </FieldGroup>
-            </form>
+            {/* 登录表单卡片 */}
+            <Card className="shadow-xl">
+              <CardContent className="pt-6">
+                <form onSubmit={handleSubmit}>
+                  <FieldGroup className="space-y-4">
+                    {error && (
+                      <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+                        {error}
+                      </div>
+                    )}
+                    <Field>
+                      <FieldLabel htmlFor="email">邮箱</FieldLabel>
+                      <Input
+                        id="email"
+                        placeholder="admin@example.com"
+                        type="email"
+                        autoCapitalize="none"
+                        autoComplete="email"
+                        autoCorrect="off"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={loading}
+                        required
+                        className="focus-visible:ring-2 focus-visible:ring-primary/50"
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="password">密码</FieldLabel>
+                      <Input
+                        id="password"
+                        placeholder="••••••••"
+                        type="password"
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={loading}
+                        required
+                        className="focus-visible:ring-2 focus-visible:ring-primary/50"
+                      />
+                    </Field>
+                    <Field>
+                      <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            登录中
+                          </>
+                        ) : (
+                          <>
+                            登录
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </>
+                        )}
+                      </Button>
+                    </Field>
+                  </FieldGroup>
+                </form>
+              </CardContent>
+            </Card>
 
+            {/* 底部信息 */}
             {githubUrl && (
-              <div className="flex justify-center">
+              <div className="mt-6 text-center animate-in fade-in duration-500">
+                <Separator className="mb-4" />
+                <a
+                  href={githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-muted-foreground inline-flex items-center gap-2 text-sm transition-colors hover:text-foreground"
+                >
+                  <Github className="h-4 w-4" />
+                  <span>Star on GitHub</span>
+                </a>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* 移动端单列布局 */}
+      {!mounted ? null : (
+        <div className="w-full max-w-md px-4 md:hidden">
+          <div className="flex flex-col gap-6 mx-auto w-full">
+            {/* 品牌区域 */}
+            <div className="mb-4 text-center">
+              <div className="mb-4 flex justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-12 w-12 text-primary"
+                >
+                  <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
+                </svg>
+              </div>
+              <p className="mt-2 text-muted-foreground">
+                登录以管理您的导航站点
+              </p>
+            </div>
+
+            {/* 登录表单卡片 */}
+            <Card className="shadow-xl">
+              <CardContent className="pt-6">
+                <form onSubmit={handleSubmit}>
+                  <FieldGroup className="space-y-4">
+                    {error && (
+                      <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
+                        {error}
+                      </div>
+                    )}
+                    <Field>
+                      <FieldLabel htmlFor="email">邮箱</FieldLabel>
+                      <Input
+                        id="email"
+                        placeholder="admin@example.com"
+                        type="email"
+                        autoCapitalize="none"
+                        autoComplete="email"
+                        autoCorrect="off"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        disabled={loading}
+                        required
+                        className="focus-visible:ring-2 focus-visible:ring-primary/50"
+                      />
+                    </Field>
+                    <Field>
+                      <FieldLabel htmlFor="password">密码</FieldLabel>
+                      <Input
+                        id="password"
+                        placeholder="••••••••"
+                        type="password"
+                        autoComplete="current-password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        disabled={loading}
+                        required
+                        className="focus-visible:ring-2 focus-visible:ring-primary/50"
+                      />
+                    </Field>
+                    <Field>
+                      <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            登录中
+                          </>
+                        ) : (
+                          <>
+                            登录
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                          </>
+                        )}
+                      </Button>
+                    </Field>
+                  </FieldGroup>
+                </form>
+              </CardContent>
+            </Card>
+
+            {/* 底部信息 */}
+            {githubUrl && (
+              <div className="mt-6 text-center animate-in fade-in duration-500">
+                <Separator className="mb-4" />
                 <a
                   href={githubUrl}
                   target="_blank"

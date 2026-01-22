@@ -5,8 +5,9 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const days = parseInt(searchParams.get('days') || '30', 10)
+    const limit = parseInt(searchParams.get('limit') || '10', 10)
 
-    const result = await getVisitStats(days)
+    const result = await getVisitStats(days, limit)
 
     if (!result.success) {
       return NextResponse.json({ error: result.error }, { status: 500 })

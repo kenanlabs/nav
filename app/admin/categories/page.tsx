@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -156,16 +156,17 @@ export default function AdminCategoriesPage() {
 
   return (
     <div className="space-y-6 p-6">
-      <div className="flex items-center justify-end">
-        <Button onClick={handleCreate}>
-          <Plus className="mr-2 h-4 w-4" />
-          新增分类
-        </Button>
-      </div>
-
       <Card>
         <CardHeader>
-          <CardTitle>分类列表</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle>分类，让导航井井有条</CardTitle>
+            <CardAction>
+              <Button onClick={handleCreate}>
+                <Plus className="mr-2 h-4 w-4" />
+                新增分类
+              </Button>
+            </CardAction>
+          </div>
         </CardHeader>
         <CardContent>
           {loading ? (

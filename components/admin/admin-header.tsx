@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
 import Link from "next/link"
-import { Home } from "lucide-react"
+import { Home, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 // 路径到标题的映射
@@ -15,7 +15,12 @@ const pageTitleMap: Record<string, string> = {
   "/admin/users": "系统设置",
 }
 
-export function AdminHeader() {
+interface AdminHeaderProps {
+  isMobile?: boolean
+  onMenuClick?: () => void
+}
+
+export function AdminHeader({ isMobile = false, onMenuClick }: AdminHeaderProps) {
   const pathname = usePathname()
 
   // 获取当前页面的标题，默认为"管理后台"
@@ -24,6 +29,18 @@ export function AdminHeader() {
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
       <div className="flex w-full items-center gap-2 px-4 lg:gap-2 lg:px-6">
+        {/* 移动端：汉堡菜单按钮 */}
+        {isMobile && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onMenuClick}
+            className="lg:hidden"
+          >
+            <Menu className="h-5 w-5" />
+            <span className="sr-only">打开菜单</span>
+          </Button>
+        )}
         <h1 className="text-base font-medium">{title}</h1>
         <div className="ml-auto flex items-center gap-2">
           <Link href="/">

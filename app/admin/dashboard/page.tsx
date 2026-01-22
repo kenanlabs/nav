@@ -1,8 +1,8 @@
 "use client"
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardAction } from "@/components/ui/card"
 import { useEffect, useState } from "react"
-import { Loader2, BarChart3, TrendingUp } from "lucide-react"
+import { Loader2, BarChart3, TrendingUp, Globe, FolderKanban, Users } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -13,6 +13,17 @@ import {
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { VisitFrequencyChart } from "@/components/admin/charts/visit-frequency-chart"
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@/components/ui/toggle-group"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 interface VisitStats {
   topSites: Array<{
@@ -43,12 +54,14 @@ interface SiteStats {
 }
 
 type TimeRange = 0 | 7 | 30 | 90
+type TopCount = 5 | 10 | 30 | 0
 
 export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true)
   const [visitStats, setVisitStats] = useState<VisitStats | null>(null)
   const [frequencyData, setFrequencyData] = useState<FrequencyData | null>(null)
-  const [timeRange, setTimeRange] = useState<TimeRange>(30)
+  const [timeRange, setTimeRange] = useState<TimeRange>(7)
+  const [topCount, setTopCount] = useState<TopCount>(5)
   const [siteStats, setSiteStats] = useState<SiteStats[]>([
     { title: "网站总数", value: 0, loading: true },
     { title: "分类总数", value: 0, loading: true },
@@ -64,6 +77,12 @@ export default function AdminDashboardPage() {
     return `最近${days}天`
   }
 
+  // 获取排行数量描述
+  const getTopCountLabel = (count: TopCount) => {
+    if (count === 0) return "全部"
+    return `前${count}`
+  }
+
   // 加载统计数据
   useEffect(() => {
     async function loadStats() {
@@ -72,7 +91,7 @@ export default function AdminDashboardPage() {
           fetch("/api/admin/stats/sites"),
           fetch("/api/admin/stats/categories"),
           fetch("/api/admin/stats/users"),
-          fetch(`/api/admin/stats/visits?days=${timeRange}`),
+          fetch(`/api/admin/stats/visits?days=${timeRange}&limit=${topCount}`),
           fetch(`/api/admin/stats/frequency?days=${timeRange}`),
         ])
 
@@ -99,7 +118,7 @@ export default function AdminDashboardPage() {
     }
 
     loadStats()
-  }, [timeRange])
+  }, [timeRange, topCount])
 
   if (loading) {
     return (
@@ -114,17 +133,24 @@ export default function AdminDashboardPage() {
       {/* 统计卡片 */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         {siteStats.map((stat) => (
-          <Card key={stat.title}>
+          <Card key={stat.title} className="@container/card">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardAction>
+                {stat.title === "网站总数" && <Globe className="h-4 w-4 text-muted-foreground" />}
+                {stat.title === "分类总数" && <FolderKanban className="h-4 w-4 text-muted-foreground" />}
+                {stat.title === "独立访客数" && <Users className="h-4 w-4 text-muted-foreground" />}
+                {stat.title === "总访问量" && <TrendingUp className="h-4 w-4 text-muted-foreground" />}
+              </CardAction>
             </CardHeader>
             <CardContent>
-              {stat.loading ? (
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-              ) : (
-                <div className="text-2xl font-bold">{stat.value.toLocaleString()}</div>
-              )}
+              <div className="text-2xl font-bold tabular-nums @[250px]/card:text-3xl">
+                {stat.loading ? (
+                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                ) : (
+                  stat.value.toLocaleString()
+                )}
+              </div>
             </CardContent>
           </Card>
         ))}
@@ -138,6 +164,37 @@ export default function AdminDashboardPage() {
             网站访问排行
           </CardTitle>
           <CardDescription>{getTimeRangeLabel(timeRange)}用户访问最多的网站</CardDescription>
+          <CardAction>
+            <ToggleGroup
+              type="single"
+              value={topCount.toString()}
+              onValueChange={(value) => value && setTopCount(Number(value) as 5 | 10 | 30 | 0)}
+              variant="outline"
+              className="hidden md:flex"
+            >
+              <ToggleGroupItem value="5" className="rounded-r-none">Top 5</ToggleGroupItem>
+              <ToggleGroupItem value="10" className="rounded-none border-l-0">Top 10</ToggleGroupItem>
+              <ToggleGroupItem value="30" className="rounded-none border-l-0">Top 30</ToggleGroupItem>
+              <ToggleGroupItem value="0" className="rounded-l-none border-l-0">All</ToggleGroupItem>
+            </ToggleGroup>
+            <Select
+              value={topCount.toString()}
+              onValueChange={(value) => setTopCount(Number(value) as 5 | 10 | 30 | 0)}
+            >
+              <SelectTrigger
+                className="flex w-28 md:hidden"
+                aria-label="选择显示数量"
+              >
+                <SelectValue placeholder="选择数量" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem value="5" className="rounded-lg">Top 5</SelectItem>
+                <SelectItem value="10" className="rounded-lg">Top 10</SelectItem>
+                <SelectItem value="30" className="rounded-lg">Top 30</SelectItem>
+                <SelectItem value="0" className="rounded-lg">All</SelectItem>
+              </SelectContent>
+            </Select>
+          </CardAction>
         </CardHeader>
         <CardContent>
           {visitStats && visitStats.topSites.length > 0 ? (

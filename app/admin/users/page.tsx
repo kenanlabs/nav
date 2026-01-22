@@ -124,15 +124,22 @@ export default function AdminSettingsPage() {
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-end">
-        <Button onClick={handleSaveSettings} disabled={savingSettings}>
+    <div className="space-y-6">
+      {/* 顶部说明和保存按钮 */}
+      <div className="flex items-center justify-between gap-4">
+        <div className="space-y-1">
+          <h3 className="text-lg font-semibold">打造你的专属导航 ✨</h3>
+          <p className="text-sm text-muted-foreground">
+            定制网站信息、功能开关，开启你的个性化导航
+          </p>
+        </div>
+        <Button onClick={handleSaveSettings} disabled={savingSettings} className="shrink-0">
           {savingSettings && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           保存设置
         </Button>
       </div>
 
-      {/* 系统设置 */}
+      {/* 卡片式设置区域 */}
       <div className="space-y-6">
         {/* 第一行：基本设置 + 功能设置 */}
         <div className="grid gap-6 md:grid-cols-2">
@@ -416,5 +423,5 @@ export default function AdminSettingsPage() {
         </Card>
       </div>
     </div>
-  )
+      )
 }

@@ -647,7 +647,7 @@ export async function recordVisit(siteId: string, request?: Request) {
   }
 }
 
-export async function getVisitStats(days: number = 30) {
+export async function getVisitStats(days: number = 30, limit: number = 10) {
   try {
     const topSites = await prisma.visit.groupBy({
       by: ['siteId'],
@@ -664,7 +664,7 @@ export async function getVisitStats(days: number = 30) {
           id: 'desc',
         },
       },
-      take: 10,
+      take: limit === 0 ? undefined : limit,
     })
 
     const siteIds = topSites.map(s => s.siteId)

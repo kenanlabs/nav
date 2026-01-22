@@ -112,27 +112,13 @@ export function Header({
     onSearchChange?.("")
   }
 
-  // 生成短名称
-  const shortName = siteName
-    .split(" ")
-    .map((word) => word[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2)
-
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="px-2 sm:px-4 lg:px-6">
         <div className="flex h-16 items-center">
           <div className="flex-shrink-0 pr-6 sm:pr-8">
             <Link href="/" className="flex items-center space-x-2">
-              {logo && (
-                <img src={logo} alt="Logo" className="h-8 w-8 object-contain" />
-              )}
-              <span className="hidden font-bold sm:inline-block text-xl">
-                {siteName}
-              </span>
-              <span className="font-bold sm:hidden text-xl">{shortName}</span>
+              <span className="font-bold text-xl">{siteName}</span>
             </Link>
           </div>
 
@@ -160,19 +146,19 @@ export function Header({
               </div>
             </nav>
           ) : (
-            // 移动端：Drawer
-            <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            // 移动端：Drawer（从左侧展开）
+            <Drawer open={mobileMenuOpen} onOpenChange={setMobileMenuOpen} direction="left">
               <DrawerTrigger asChild>
                 <button className="flex items-center space-x-2 px-2 py-1.5 text-sm font-medium hover:bg-accent rounded-md transition-colors">
                   <Menu className="h-4 w-4" />
                   <span>分类</span>
                 </button>
               </DrawerTrigger>
-              <DrawerContent>
-                <DrawerHeader>
+              <DrawerContent className="h-full w-[280px] rounded-none border-r">
+                <DrawerHeader className="sr-only">
                   <DrawerTitle>选择分类</DrawerTitle>
                 </DrawerHeader>
-                <div className="grid gap-1 px-4 pb-4">
+                <div className="grid gap-1 px-4 py-6">
                   {categories.map((category) => (
                     <Link
                       key={category.id}

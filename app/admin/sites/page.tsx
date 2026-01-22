@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -236,77 +236,79 @@ title: "加载失败",
   }
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex items-center justify-end">
+    <div className="space-y-4 p-6">
+      {/* 筛选器工具栏 */}
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">分类:</span>
+            <Select value={filterCategory} onValueChange={setFilterCategory}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="全部分类" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部分类</SelectItem>
+                {categories.map((category) => (
+                  <SelectItem key={category.id} value={category.id}>
+                    {category.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">状态:</span>
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="全部状态" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部状态</SelectItem>
+                <SelectItem value="true">已发布</SelectItem>
+                <SelectItem value="false">草稿</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-muted-foreground">提交者:</span>
+            <Select value={filterSubmitter} onValueChange={setFilterSubmitter}>
+              <SelectTrigger className="w-[140px]">
+                <SelectValue placeholder="全部来源" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">全部来源</SelectItem>
+                <SelectItem value="true">用户提交</SelectItem>
+                <SelectItem value="false">管理员创建</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {(filterCategory !== "all" || filterStatus !== "all" || filterSubmitter !== "all") && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleResetFilters}
+              className="h-8"
+            >
+              重置
+            </Button>
+          )}
+        </div>
+
         <Button onClick={handleCreate}>
           <Plus className="mr-2 h-4 w-4" />
           新增网站
         </Button>
       </div>
 
+      {/* 网站列表卡片 */}
       <Card>
         <CardHeader>
-          <CardTitle>网站列表</CardTitle>
+          <CardTitle>收录你的宝藏网站</CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">分类:</span>
-              <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="全部分类" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">全部分类</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      {category.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">状态:</span>
-              <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[120px]">
-                  <SelectValue placeholder="全部状态" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">全部状态</SelectItem>
-                  <SelectItem value="true">已发布</SelectItem>
-                  <SelectItem value="false">草稿</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">提交者:</span>
-              <Select value={filterSubmitter} onValueChange={setFilterSubmitter}>
-                <SelectTrigger className="w-[140px]">
-                  <SelectValue placeholder="全部来源" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">全部来源</SelectItem>
-                  <SelectItem value="true">用户提交</SelectItem>
-                  <SelectItem value="false">管理员创建</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {(filterCategory !== "all" || filterStatus !== "all" || filterSubmitter !== "all") && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleResetFilters}
-                className="h-8"
-              >
-                重置
-              </Button>
-            )}
-          </div>
-
+        <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-8">
               <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
