@@ -5,6 +5,12 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import Link from "next/link"
 import { Home } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 
 // 路径到标题的映射
 const pageTitleMap: Record<string, string> = {
@@ -56,12 +62,21 @@ export function AdminHeader({ isMobile = false, onMenuClick }: AdminHeaderProps)
               <span className="sr-only">打开菜单</span>
             </Button>
           )}
-          <Link href="/">
-            <Button variant="ghost" size="icon">
-              <Home className="h-5 w-5" />
-              <span className="sr-only">返回前台</span>
-            </Button>
-          </Link>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link href="/">
+                  <Button variant="ghost" size="icon">
+                    <Home className="h-5 w-5" />
+                    <span className="sr-only">访问网站首页</span>
+                  </Button>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>访问网站首页</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <ThemeToggle />
         </div>
       </div>

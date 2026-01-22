@@ -5,6 +5,12 @@ import { usePathname, useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { AdminAvatar, clearUserCache } from "./admin-avatar"
 import {
   LayoutDashboard,
@@ -125,31 +131,40 @@ export function AdminSidebar({ className }: SidebarProps) {
             </>
           )}
         </Link>
-        {/* Logo 图标作为收起/展开按钮 */}
-        <Button
-          variant="ghost"
-          size="icon"
-          className={collapsed ? "text-foreground hover:bg-accent" : "text-muted-foreground hover:bg-accent"}
-          onClick={handleToggleCollapse}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="3" width="18" height="18" rx="2" />
-            <path d="M9 3v18" />
-          </svg>
-          <span className="sr-only">
-            {collapsed ? "展开侧边栏" : "收起侧边栏"}
-          </span>
-        </Button>
+        {/* 侧边栏折叠/展开按钮 */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className={collapsed ? "text-foreground hover:bg-accent" : "text-muted-foreground hover:bg-accent"}
+                onClick={handleToggleCollapse}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M9 3v18" />
+                </svg>
+                <span className="sr-only">
+                  {collapsed ? "展开侧边栏" : "折叠侧边栏"}
+                </span>
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>{collapsed ? "展开侧边栏" : "折叠侧边栏"}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
