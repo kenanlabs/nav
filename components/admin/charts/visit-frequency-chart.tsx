@@ -95,10 +95,10 @@ export function VisitFrequencyChart({ data, timeRange, onTimeRangeChange }: Visi
 
   // 获取时间范围标签
   const getTimeRangeLabel = () => {
-    if (timeRange === 0) return "全部"
-    if (timeRange === 90) return "最近3个月"
-    if (timeRange === 30) return "最近1个月"
-    return "最近" + timeRange + "天"
+    if (timeRange === 0) return "全部时间"
+    if (timeRange === 90) return "近3个月"
+    if (timeRange === 30) return "近30天"
+    return "近" + timeRange + "天"
   }
 
   return (
@@ -110,10 +110,10 @@ export function VisitFrequencyChart({ data, timeRange, onTimeRangeChange }: Visi
         </CardTitle>
         <CardDescription>
           <span className="hidden @[540px]/card:block">
-            {getTimeRangeLabel()}共 {totalVisits.toLocaleString()} 次访问
+            {getTimeRangeLabel()} · {totalVisits.toLocaleString()} 次访问
           </span>
           <span className="@[540px]/card:hidden">
-            {timeRange === 0 ? "全部" : (timeRange === 90 ? "3个月" : timeRange === 30 ? "1个月" : timeRange + "天")}
+            {getTimeRangeLabel()}
           </span>
         </CardDescription>
         <CardAction>

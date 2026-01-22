@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {
   Drawer,
-  DrawerClose,
   DrawerContent,
   DrawerDescription,
   DrawerHeader,
@@ -115,21 +114,10 @@ export function AdminMobileNav({ open, onOpenChange }: AdminMobileNavProps) {
         {/* Logo 区域 */}
         <div className="flex h-16 items-center border-b px-6">
           <Link href="/admin" onClick={handleNavClick} className="flex items-center space-x-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <path d="M9 3v18" />
-            </svg>
-            <span className="text-lg font-bold">{siteName}</span>
+            {siteLogo && (
+              <img src={siteLogo} alt="Logo" className="h-6 w-6 object-contain" />
+            )}
+            <span className="font-bold text-xl">{siteName}</span>
           </Link>
         </div>
 

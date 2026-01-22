@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle, CardAction } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   Table,
   TableBody,
@@ -38,7 +38,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { Plus, Pencil, Trash2, Power, Loader2 } from "lucide-react"
+import { Field, FieldLabel } from "@/components/ui/field"
+import { Plus, Pencil, Trash2, Power, Loader2, RotateCcw } from "lucide-react"
 import { SiteFormDialog } from "@/components/admin/site-form-dialog"
 import { getSitesWithPagination, deleteSite, toggleSitePublish, getCategoriesForFilter } from "@/lib/actions"
 import { useToast } from "@/hooks/use-toast"
@@ -240,10 +241,11 @@ title: "加载失败",
       {/* 筛选器工具栏 */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="flex flex-wrap items-center gap-4">
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">分类:</span>
+          {/* 分类筛选 */}
+          <Field orientation="horizontal" className="w-auto">
+            <FieldLabel>分类</FieldLabel>
             <Select value={filterCategory} onValueChange={setFilterCategory}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="全部分类" />
               </SelectTrigger>
               <SelectContent>
@@ -255,12 +257,13 @@ title: "加载失败",
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </Field>
 
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">状态:</span>
+          {/* 状态筛选 */}
+          <Field orientation="horizontal" className="w-auto">
+            <FieldLabel>状态</FieldLabel>
             <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-[120px]">
+              <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="全部状态" />
               </SelectTrigger>
               <SelectContent>
@@ -269,10 +272,11 @@ title: "加载失败",
                 <SelectItem value="false">草稿</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </Field>
 
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">提交者:</span>
+          {/* 提交者筛选 */}
+          <Field orientation="horizontal" className="w-auto">
+            <FieldLabel>来源</FieldLabel>
             <Select value={filterSubmitter} onValueChange={setFilterSubmitter}>
               <SelectTrigger className="w-[140px]">
                 <SelectValue placeholder="全部来源" />
@@ -283,16 +287,19 @@ title: "加载失败",
                 <SelectItem value="false">管理员创建</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </Field>
 
+          {/* 重置按钮 */}
           {(filterCategory !== "all" || filterStatus !== "all" || filterSubmitter !== "all") && (
             <Button
               variant="ghost"
-              size="sm"
+              size="icon"
               onClick={handleResetFilters}
-              className="h-8"
+              className="h-9 w-9"
+              title="重置筛选"
             >
-              重置
+              <RotateCcw className="h-4 w-4" />
+              <span className="sr-only">重置筛选</span>
             </Button>
           )}
         </div>

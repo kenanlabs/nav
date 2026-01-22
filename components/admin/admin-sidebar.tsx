@@ -112,17 +112,24 @@ export function AdminSidebar({ className }: SidebarProps) {
     <div className={`flex h-screen flex-col border-r bg-sidebar transition-all duration-300 ${
       collapsed ? "w-16" : "w-64"
     } ${className || ""}`}>
-      <div className="flex h-16 items-center justify-between border-b px-3">
+      <div className={`flex h-16 items-center border-b ${
+        collapsed ? "px-3 justify-center" : "px-6 pr-3 justify-between"
+      }`}>
         <Link href="/admin" className="flex items-center space-x-2">
           {!collapsed && (
-            <span className="text-lg font-bold">{siteName}</span>
+            <>
+              {siteLogo && (
+                <img src={siteLogo} alt="Logo" className="h-6 w-6 object-contain" />
+              )}
+              <span className="font-bold text-xl">{siteName}</span>
+            </>
           )}
         </Link>
         {/* Logo 图标作为收起/展开按钮 */}
         <Button
           variant="ghost"
           size="icon"
-          className={collapsed ? "text-foreground" : "text-muted-foreground hover:bg-accent"}
+          className={collapsed ? "text-foreground hover:bg-accent" : "text-muted-foreground hover:bg-accent"}
           onClick={handleToggleCollapse}
         >
           <svg

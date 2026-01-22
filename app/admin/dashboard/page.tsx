@@ -71,10 +71,10 @@ export default function AdminDashboardPage() {
 
   // 获取时间范围描述
   const getTimeRangeLabel = (days: TimeRange) => {
-    if (days === 0) return "全部"
-    if (days === 90) return "最近3个月"
-    if (days === 30) return "最近1个月"
-    return `最近${days}天`
+    if (days === 0) return "全部时间"
+    if (days === 90) return "近3个月"
+    if (days === 30) return "近30天"
+    return `近${days}天`
   }
 
   // 获取排行数量描述
@@ -163,7 +163,7 @@ export default function AdminDashboardPage() {
             <BarChart3 className="h-5 w-5" />
             网站访问排行
           </CardTitle>
-          <CardDescription>{getTimeRangeLabel(timeRange)}用户访问最多的网站</CardDescription>
+          <CardDescription>{getTimeRangeLabel(timeRange)}热门网站</CardDescription>
           <CardAction>
             <ToggleGroup
               type="single"
