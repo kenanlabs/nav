@@ -1,100 +1,182 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* 引入霞鹜文楷字体 */
 @import url('https://cdn.jsdelivr.net/npm/lxgw-wenkai-webfont@1.1.0/style.css');
+
+/* Tailwind v4 主题配置 */
+@theme {
+  /* Colors - 使用 oklch 色彩空间 */
+  --color-background: oklch(100% 0 0);
+  --color-foreground: oklch(14.08% 0.027 265.75);
+  --color-card: oklch(100% 0 0);
+  --color-card-foreground: oklch(14.08% 0.027 265.75);
+  --color-popover: oklch(100% 0 0);
+  --color-popover-foreground: oklch(14.08% 0.027 265.75);
+  --color-primary: oklch(20.47% 0.026 265.75);
+  --color-primary-foreground: oklch(98.51% 0.002 247.84);
+  --color-secondary: oklch(96.76% 0.006 264.53);
+  --color-secondary-foreground: oklch(20.47% 0.026 265.75);
+  --color-muted: oklch(96.76% 0.006 264.53);
+  --color-muted-foreground: oklch(55.17% 0.016 264.53);
+  --color-accent: oklch(96.76% 0.006 264.53);
+  --color-accent-foreground: oklch(20.47% 0.026 265.75);
+  --color-destructive: oklch(57.71% 0.215 27.33);
+  --color-destructive-foreground: oklch(98.51% 0.002 247.84);
+  --color-border: oklch(92.88% 0.013 264.53);
+  --color-input: oklch(92.88% 0.013 264.53);
+  --color-ring: oklch(14.08% 0.027 265.75);
+  --color-sidebar: oklch(98.51% 0 0);
+  --color-sidebar-foreground: oklch(14.08% 0.006 285.88);
+  
+  /* Chart colors */
+  --color-chart-1: oklch(65% 0.17 25);
+  --color-chart-2: oklch(55% 0.12 170);
+  --color-chart-3: oklch(40% 0.08 230);
+  --color-chart-4: oklch(75% 0.15 85);
+  --color-chart-5: oklch(70% 0.19 50);
+  
+  /* Success/Warning/Info */
+  --color-success: oklch(55% 0.16 145);
+  --color-success-foreground: oklch(98% 0.02 145);
+  --color-warning: oklch(75% 0.18 85);
+  --color-warning-foreground: oklch(25% 0.05 85);
+  --color-info: oklch(60% 0.18 230);
+  --color-info-foreground: oklch(100% 0 0);
+  
+  /* Border radius */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  
+  /* Animations */
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+  --animate-fade-in: fade-in 0.3s ease-out;
+  --animate-fade-up: fade-up 0.4s ease-out;
+  --animate-scale-in: scale-in 0.2s ease-out;
+  --animate-slide-in-from-right: slide-in-from-right 0.3s ease-out;
+  --animate-slide-in-from-left: slide-in-from-left 0.3s ease-out;
+  --animate-slide-in-from-top: slide-in-from-top 0.3s ease-out;
+  --animate-slide-in-from-bottom: slide-in-from-bottom 0.3s ease-out;
+  --animate-shimmer: shimmer 2s infinite linear;
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-spin: spin 1s linear infinite;
+  
+  /* Keyframes */
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
+  }
+  
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
+  }
+  
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  
+  @keyframes slide-in-from-right {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+  }
+  
+  @keyframes slide-in-from-left {
+    from { transform: translateX(-100%); }
+    to { transform: translateX(0); }
+  }
+  
+  @keyframes slide-in-from-top {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+  }
+  
+  @keyframes slide-in-from-bottom {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+  
+  @keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+  }
+  
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+}
+
+/* Dark mode */
+.dark {
+  --color-background: oklch(14.08% 0.027 265.75);
+  --color-foreground: oklch(98.51% 0.002 247.84);
+  --color-card: oklch(14.08% 0.027 265.75);
+  --color-card-foreground: oklch(98.51% 0.002 247.84);
+  --color-popover: oklch(14.08% 0.027 265.75);
+  --color-popover-foreground: oklch(98.51% 0.002 247.84);
+  --color-primary: oklch(98.51% 0.002 247.84);
+  --color-primary-foreground: oklch(20.47% 0.026 265.75);
+  --color-secondary: oklch(26.94% 0.019 264.53);
+  --color-secondary-foreground: oklch(98.51% 0.002 247.84);
+  --color-muted: oklch(26.94% 0.019 264.53);
+  --color-muted-foreground: oklch(71.19% 0.014 264.53);
+  --color-accent: oklch(26.94% 0.019 264.53);
+  --color-accent-foreground: oklch(98.51% 0.002 247.84);
+  --color-destructive: oklch(42.61% 0.156 27.33);
+  --color-destructive-foreground: oklch(98.51% 0.002 247.84);
+  --color-border: oklch(26.94% 0.019 264.53);
+  --color-input: oklch(26.94% 0.019 264.53);
+  --color-ring: oklch(87.31% 0.014 264.53);
+  --color-sidebar: oklch(16% 0.027 265.75);
+  --color-sidebar-foreground: oklch(98.51% 0.002 247.84);
+  
+  /* Chart colors - dark mode */
+  --color-chart-1: oklch(55% 0.2 250);
+  --color-chart-2: oklch(55% 0.15 160);
+  --color-chart-3: oklch(65% 0.18 60);
+  --color-chart-4: oklch(65% 0.17 300);
+  --color-chart-5: oklch(60% 0.2 350);
+  
+  /* Success/Warning/Info - dark mode */
+  --color-success: oklch(60% 0.17 145);
+  --color-success-foreground: oklch(20% 0.05 145);
+  --color-warning: oklch(75% 0.18 85);
+  --color-warning-foreground: oklch(25% 0.05 85);
+  --color-info: oklch(60% 0.18 230);
+  --color-info-foreground: oklch(100% 0 0);
+}
 
 /* 定义霞鹜文楷字体类 */
 .font-lxgw-wenkai {
   font-family: 'LXGW WenKai', 'STKaiti', 'KaiTi', serif;
 }
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-    --sidebar: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 10%;
-    
-    /* Chart colors */
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-    
-    /* Success/Warning/Info colors */
-    --success: 142.1 76.2% 36.3%;
-    --success-foreground: 355.7 100% 97.3%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 48 96% 89%;
-    --info: 199 89% 48%;
-    --info-foreground: 0 0% 100%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar: 222.2 84% 6%;
-    --sidebar-foreground: 210 40% 98%;
-    
-    /* Chart colors - dark mode */
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    
-    /* Success/Warning/Info colors - dark mode */
-    --success: 142.1 70.6% 45.3%;
-    --success-foreground: 144.9 80.4% 10%;
-    --warning: 48 96% 53%;
-    --warning-foreground: 36 45% 15%;
-    --info: 199 89% 48%;
-    --info-foreground: 0 0% 100%;
-  }
-}
-
+/* Base styles */
 @layer base {
   * {
     @apply border-border;
   }
+  
   body {
     @apply bg-background text-foreground antialiased;
     overflow-y: scroll;
@@ -106,85 +188,9 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
-}
-
-/* 自定义动画 */
-@keyframes shimmer {
-  0% {
-    background-position: -200% 0;
-  }
-  100% {
-    background-position: 200% 0;
-  }
-}
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes scale-in {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-@keyframes slide-in-from-right {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-in-from-left {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slide-in-from-top {
-  from {
-    transform: translateY(-100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-@keyframes slide-in-from-bottom {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
 }
 
 /* 骨架屏闪烁动画 */
@@ -192,9 +198,9 @@
   animation: shimmer 2s infinite linear;
   background: linear-gradient(
     90deg,
-    hsl(var(--muted)) 0%,
-    hsl(var(--muted) / 0.5) 50%,
-    hsl(var(--muted)) 100%
+    var(--color-muted) 0%,
+    color-mix(in oklch, var(--color-muted) 50%, transparent) 50%,
+    var(--color-muted) 100%
   );
   background-size: 200% 100%;
 }
@@ -203,6 +209,7 @@
 .card-hover {
   @apply transition-all duration-200 ease-out;
 }
+
 .card-hover:hover {
   @apply -translate-y-0.5 shadow-md;
 }
@@ -216,3 +223,177 @@
 .text-gradient {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-foreground to-muted-foreground;
 }
+
+/* ============================================
+   tailwindcss-animate 兼容动画类
+   ============================================ */
+
+/* 基础动画类 */
+.animate-in {
+  animation-name: enter;
+  animation-duration: 150ms;
+  --tw-enter-opacity: initial;
+  --tw-enter-scale: initial;
+  --tw-enter-rotate: initial;
+  --tw-enter-translate-x: initial;
+  --tw-enter-translate-y: initial;
+}
+
+.animate-out {
+  animation-name: exit;
+  animation-duration: 150ms;
+  --tw-exit-opacity: initial;
+  --tw-exit-scale: initial;
+  --tw-exit-rotate: initial;
+  --tw-exit-translate-x: initial;
+  --tw-exit-translate-y: initial;
+}
+
+@keyframes enter {
+  from {
+    opacity: var(--tw-enter-opacity, 1);
+    transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0));
+  }
+}
+
+@keyframes exit {
+  to {
+    opacity: var(--tw-exit-opacity, 1);
+    transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0));
+  }
+}
+
+/* Fade 动画 */
+.fade-in { --tw-enter-opacity: 0; }
+.fade-in-0 { --tw-enter-opacity: 0; }
+.fade-in-5 { --tw-enter-opacity: 0.05; }
+.fade-in-10 { --tw-enter-opacity: 0.1; }
+.fade-in-20 { --tw-enter-opacity: 0.2; }
+.fade-in-25 { --tw-enter-opacity: 0.25; }
+.fade-in-30 { --tw-enter-opacity: 0.3; }
+.fade-in-40 { --tw-enter-opacity: 0.4; }
+.fade-in-50 { --tw-enter-opacity: 0.5; }
+.fade-in-60 { --tw-enter-opacity: 0.6; }
+.fade-in-70 { --tw-enter-opacity: 0.7; }
+.fade-in-75 { --tw-enter-opacity: 0.75; }
+.fade-in-80 { --tw-enter-opacity: 0.8; }
+.fade-in-90 { --tw-enter-opacity: 0.9; }
+.fade-in-95 { --tw-enter-opacity: 0.95; }
+.fade-in-100 { --tw-enter-opacity: 1; }
+
+.fade-out { --tw-exit-opacity: 0; }
+.fade-out-0 { --tw-exit-opacity: 0; }
+.fade-out-5 { --tw-exit-opacity: 0.05; }
+.fade-out-10 { --tw-exit-opacity: 0.1; }
+.fade-out-20 { --tw-exit-opacity: 0.2; }
+.fade-out-25 { --tw-exit-opacity: 0.25; }
+.fade-out-30 { --tw-exit-opacity: 0.3; }
+.fade-out-40 { --tw-exit-opacity: 0.4; }
+.fade-out-50 { --tw-exit-opacity: 0.5; }
+.fade-out-60 { --tw-exit-opacity: 0.6; }
+.fade-out-70 { --tw-exit-opacity: 0.7; }
+.fade-out-75 { --tw-exit-opacity: 0.75; }
+.fade-out-80 { --tw-exit-opacity: 0.8; }
+.fade-out-90 { --tw-exit-opacity: 0.9; }
+.fade-out-95 { --tw-exit-opacity: 0.95; }
+.fade-out-100 { --tw-exit-opacity: 1; }
+
+/* Zoom 动画 */
+.zoom-in { --tw-enter-scale: 0; }
+.zoom-in-0 { --tw-enter-scale: 0; }
+.zoom-in-50 { --tw-enter-scale: 0.5; }
+.zoom-in-75 { --tw-enter-scale: 0.75; }
+.zoom-in-90 { --tw-enter-scale: 0.9; }
+.zoom-in-95 { --tw-enter-scale: 0.95; }
+.zoom-in-100 { --tw-enter-scale: 1; }
+.zoom-in-105 { --tw-enter-scale: 1.05; }
+.zoom-in-110 { --tw-enter-scale: 1.1; }
+.zoom-in-125 { --tw-enter-scale: 1.25; }
+.zoom-in-150 { --tw-enter-scale: 1.5; }
+
+.zoom-out { --tw-exit-scale: 0; }
+.zoom-out-0 { --tw-exit-scale: 0; }
+.zoom-out-50 { --tw-exit-scale: 0.5; }
+.zoom-out-75 { --tw-exit-scale: 0.75; }
+.zoom-out-90 { --tw-exit-scale: 0.9; }
+.zoom-out-95 { --tw-exit-scale: 0.95; }
+.zoom-out-100 { --tw-exit-scale: 1; }
+.zoom-out-105 { --tw-exit-scale: 1.05; }
+.zoom-out-110 { --tw-exit-scale: 1.1; }
+.zoom-out-125 { --tw-exit-scale: 1.25; }
+.zoom-out-150 { --tw-exit-scale: 1.5; }
+
+/* Slide 动画 */
+.slide-in-from-top { --tw-enter-translate-y: -100%; }
+.slide-in-from-top-0 { --tw-enter-translate-y: 0; }
+.slide-in-from-top-1 { --tw-enter-translate-y: -0.25rem; }
+.slide-in-from-top-2 { --tw-enter-translate-y: -0.5rem; }
+.slide-in-from-top-4 { --tw-enter-translate-y: -1rem; }
+.slide-in-from-top-8 { --tw-enter-translate-y: -2rem; }
+.slide-in-from-top-full { --tw-enter-translate-y: -100%; }
+.slide-in-from-top-\[48\%\] { --tw-enter-translate-y: -48%; }
+
+.slide-in-from-bottom { --tw-enter-translate-y: 100%; }
+.slide-in-from-bottom-0 { --tw-enter-translate-y: 0; }
+.slide-in-from-bottom-1 { --tw-enter-translate-y: 0.25rem; }
+.slide-in-from-bottom-2 { --tw-enter-translate-y: 0.5rem; }
+.slide-in-from-bottom-4 { --tw-enter-translate-y: 1rem; }
+.slide-in-from-bottom-8 { --tw-enter-translate-y: 2rem; }
+.slide-in-from-bottom-full { --tw-enter-translate-y: 100%; }
+
+.slide-in-from-left { --tw-enter-translate-x: -100%; }
+.slide-in-from-left-0 { --tw-enter-translate-x: 0; }
+.slide-in-from-left-1 { --tw-enter-translate-x: -0.25rem; }
+.slide-in-from-left-2 { --tw-enter-translate-x: -0.5rem; }
+.slide-in-from-left-4 { --tw-enter-translate-x: -1rem; }
+.slide-in-from-left-8 { --tw-enter-translate-x: -2rem; }
+.slide-in-from-left-full { --tw-enter-translate-x: -100%; }
+.slide-in-from-left-1\/2 { --tw-enter-translate-x: -50%; }
+
+.slide-in-from-right { --tw-enter-translate-x: 100%; }
+.slide-in-from-right-0 { --tw-enter-translate-x: 0; }
+.slide-in-from-right-1 { --tw-enter-translate-x: 0.25rem; }
+.slide-in-from-right-2 { --tw-enter-translate-x: 0.5rem; }
+.slide-in-from-right-4 { --tw-enter-translate-x: 1rem; }
+.slide-in-from-right-8 { --tw-enter-translate-x: 2rem; }
+.slide-in-from-right-full { --tw-enter-translate-x: 100%; }
+
+.slide-out-to-top { --tw-exit-translate-y: -100%; }
+.slide-out-to-top-0 { --tw-exit-translate-y: 0; }
+.slide-out-to-top-1 { --tw-exit-translate-y: -0.25rem; }
+.slide-out-to-top-2 { --tw-exit-translate-y: -0.5rem; }
+.slide-out-to-top-4 { --tw-exit-translate-y: -1rem; }
+.slide-out-to-top-8 { --tw-exit-translate-y: -2rem; }
+.slide-out-to-top-full { --tw-exit-translate-y: -100%; }
+.slide-out-to-top-\[48\%\] { --tw-exit-translate-y: -48%; }
+
+.slide-out-to-bottom { --tw-exit-translate-y: 100%; }
+.slide-out-to-bottom-0 { --tw-exit-translate-y: 0; }
+.slide-out-to-bottom-1 { --tw-exit-translate-y: 0.25rem; }
+.slide-out-to-bottom-2 { --tw-exit-translate-y: 0.5rem; }
+.slide-out-to-bottom-4 { --tw-exit-translate-y: 1rem; }
+.slide-out-to-bottom-8 { --tw-exit-translate-y: 2rem; }
+.slide-out-to-bottom-full { --tw-exit-translate-y: 100%; }
+
+.slide-out-to-left { --tw-exit-translate-x: -100%; }
+.slide-out-to-left-0 { --tw-exit-translate-x: 0; }
+.slide-out-to-left-1 { --tw-exit-translate-x: -0.25rem; }
+.slide-out-to-left-2 { --tw-exit-translate-x: -0.5rem; }
+.slide-out-to-left-4 { --tw-exit-translate-x: -1rem; }
+.slide-out-to-left-8 { --tw-exit-translate-x: -2rem; }
+.slide-out-to-left-full { --tw-exit-translate-x: -100%; }
+.slide-out-to-left-1\/2 { --tw-exit-translate-x: -50%; }
+
+.slide-out-to-right { --tw-exit-translate-x: 100%; }
+.slide-out-to-right-0 { --tw-exit-translate-x: 0; }
+.slide-out-to-right-1 { --tw-exit-translate-x: 0.25rem; }
+.slide-out-to-right-2 { --tw-exit-translate-x: 0.5rem; }
+.slide-out-to-right-4 { --tw-exit-translate-x: 1rem; }
+.slide-out-to-right-8 { --tw-exit-translate-x: 2rem; }
+.slide-out-to-right-full { --tw-exit-translate-x: 100%; }
+
+/* Duration 类 */
+.duration-150 { animation-duration: 150ms; }
+.duration-200 { animation-duration: 200ms; }
+.duration-300 { animation-duration: 300ms; }
+.duration-500 { animation-duration: 500ms; }
