@@ -18,7 +18,10 @@ import {
   FolderKanban,
   Users,
   Database,
+  PanelLeftClose,
+  PanelLeft,
 } from "lucide-react"
+import { cn } from "@/lib/utils"
 
 // 系统设置缓存类型
 interface SettingsCache {
@@ -115,80 +118,107 @@ export function AdminSidebar({ className }: SidebarProps) {
   }, [])
 
   return (
-    <div className={`flex h-screen flex-col border-r bg-sidebar transition-all duration-300 ${
-      collapsed ? "w-16" : "w-64"
-    } ${className || ""}`}>
-      <div className={`flex h-16 items-center border-b ${
-        collapsed ? "px-3 justify-center" : "px-6 pr-3 justify-between"
-      }`}>
-        <Link href="/admin" className="flex items-center space-x-2">
-          {!collapsed && (
-            <>
-              {siteLogo && (
-                <img src={siteLogo} alt="Logo" className="h-6 w-6 object-contain" />
-              )}
-              <span className="font-bold text-xl">{siteName}</span>
-            </>
+    <div className={cn(
+      "flex h-screen flex-col border-r bg-sidebar transition-all duration-300 ease-in-out",
+      collapsed ? "w-[60px]" : "w-60",
+      className
+    )}>
+      {/* Header */}
+      <div className={cn(
+        "flex h-14 items-center border-b transition-all duration-300",
+        collapsed ? "px-2 justify-center" : "px-4 justify-between"
+      )}>
+        <Link 
+          href="/admin" 
+          className={cn(
+            "flex items-center gap-2 overflow-hidden transition-all duration-300",
+            collapsed && "opacity-0 w-0"
           )}
+        >
+          {siteLogo && (
+            <img src={siteLogo} alt="Logo" className="h-6 w-6 object-contain flex-shrink-0" />
+          )}
+          <span className="font-semibold text-base whitespace-nowrap">{siteName}</span>
         </Link>
-        {/* 侧边栏折叠/展开按钮 */}
-        <TooltipProvider>
+        
+        {/* 折叠按钮 */}
+        <TooltipProvider delayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className={collapsed ? "text-foreground hover:bg-accent" : "text-muted-foreground hover:bg-accent"}
+                className="h-8 w-8 flex-shrink-0"
                 onClick={handleToggleCollapse}
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <path d="M9 3v18" />
-                </svg>
+                {collapsed ? (
+                  <PanelLeft className="h-4 w-4" />
+                ) : (
+                  <PanelLeftClose className="h-4 w-4" />
+                )}
                 <span className="sr-only">
                   {collapsed ? "展开侧边栏" : "折叠侧边栏"}
                 </span>
               </Button>
             </TooltipTrigger>
-            <TooltipContent>
+            <TooltipContent side="right" sideOffset={10}>
               <p>{collapsed ? "展开侧边栏" : "折叠侧边栏"}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       </div>
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {navItems.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname === item.href
+      {/* Navigation */}
+      <nav className="flex-1 space-y-1 p-2 overflow-y-auto">
+        <TooltipProvider delayDuration={0}>
+          {navItems.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href
 
-          return (
-            <Link key={item.href} href={item.href}>
+            const button = (
               <Button
                 variant={isActive ? "secondary" : "ghost"}
-                className={`w-full ${collapsed ? 'justify-center' : 'justify-start'}`}
+                className={cn(
+                  "w-full transition-all duration-200",
+                  collapsed ? "justify-center px-2" : "justify-start px-3",
+                  isActive && "shadow-sm"
+                )}
               >
-                <Icon className="h-4 w-4" />
-                {!collapsed && <span className="ml-2">{item.title}</span>}
+                <Icon className={cn("h-4 w-4 flex-shrink-0", !collapsed && "mr-2")} />
+                {!collapsed && (
+                  <span className="truncate">{item.title}</span>
+                )}
               </Button>
-            </Link>
-          )
-        })}
+            )
+
+            if (collapsed) {
+              return (
+                <Tooltip key={item.href}>
+                  <TooltipTrigger asChild>
+                    <Link href={item.href}>
+                      {button}
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="right" sideOffset={10}>
+                    <p>{item.title}</p>
+                  </TooltipContent>
+                </Tooltip>
+              )
+            }
+
+            return (
+              <Link key={item.href} href={item.href}>
+                {button}
+              </Link>
+            )
+          })}
+        </TooltipProvider>
       </nav>
 
       <Separator />
 
-      <div className="p-3">
+      {/* Footer - User Avatar */}
+      <div className="p-2">
         <AdminAvatar collapsed={collapsed} />
       </div>
     </div>

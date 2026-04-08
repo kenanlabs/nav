@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardAction } from "@/components/ui/card"
 import { useEffect, useState } from "react"
-import { Loader2, BarChart3, TrendingUp, Globe, FolderKanban, Users } from "lucide-react"
+import { Loader2, BarChart3, TrendingUp, Globe, FolderKanban, Users, ArrowUpRight } from "lucide-react"
 import {
   Table,
   TableBody,
@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { cn } from "@/lib/utils"
 
 interface VisitStats {
   topSites: Array<{
@@ -51,10 +52,19 @@ interface SiteStats {
   title: string
   value: number
   loading: boolean
+  icon: typeof Globe
+  trend?: string
 }
 
 type TimeRange = 0 | 7 | 30 | 90
 type TopCount = 5 | 10 | 30 | 0
+
+const statIcons = {
+  "网站总数": Globe,
+  "分类总数": FolderKanban,
+  "独立访客数": Users,
+  "总访问量": TrendingUp,
+}
 
 export default function AdminDashboardPage() {
   const [loading, setLoading] = useState(true)
@@ -63,10 +73,10 @@ export default function AdminDashboardPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>(7)
   const [topCount, setTopCount] = useState<TopCount>(5)
   const [siteStats, setSiteStats] = useState<SiteStats[]>([
-    { title: "网站总数", value: 0, loading: true },
-    { title: "分类总数", value: 0, loading: true },
-    { title: "独立访客数", value: 0, loading: true },
-    { title: "总访问量", value: 0, loading: true },
+    { title: "网站总数", value: 0, loading: true, icon: Globe },
+    { title: "分类总数", value: 0, loading: true, icon: FolderKanban },
+    { title: "独立访客数", value: 0, loading: true, icon: Users },
+    { title: "总访问量", value: 0, loading: true, icon: TrendingUp },
   ])
 
   // 获取时间范围描述
@@ -102,10 +112,10 @@ export default function AdminDashboardPage() {
         const frequencyData = await frequencyRes.json()
 
         setSiteStats([
-          { title: "网站总数", value: sitesData.total || 0, loading: false },
-          { title: "分类总数", value: categoriesData.total || 0, loading: false },
-          { title: "独立访客数", value: usersData.total || 0, loading: false },
-          { title: "总访问量", value: visitsData.totalVisits || 0, loading: false },
+          { title: "网站总数", value: sitesData.total || 0, loading: false, icon: Globe },
+          { title: "分类总数", value: categoriesData.total || 0, loading: false, icon: FolderKanban },
+          { title: "独立访客数", value: usersData.total || 0, loading: false, icon: Users },
+          { title: "总访问量", value: visitsData.totalVisits || 0, loading: false, icon: TrendingUp },
         ])
 
         setVisitStats(visitsData)
@@ -122,47 +132,66 @@ export default function AdminDashboardPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-12">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+          <p className="text-sm text-muted-foreground">加载数据中...</p>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="space-y-6 p-6">
+      {/* 页面标题 */}
+      <div>
+        <h1 className="text-2xl font-semibold tracking-tight">数据统计</h1>
+        <p className="text-sm text-muted-foreground mt-1">查看网站访问数据和统计信息</p>
+      </div>
+
       {/* 统计卡片 */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {siteStats.map((stat) => (
-          <Card key={stat.title} className="@container/card">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-              <CardAction>
-                {stat.title === "网站总数" && <Globe className="h-4 w-4 text-muted-foreground" />}
-                {stat.title === "分类总数" && <FolderKanban className="h-4 w-4 text-muted-foreground" />}
-                {stat.title === "独立访客数" && <Users className="h-4 w-4 text-muted-foreground" />}
-                {stat.title === "总访问量" && <TrendingUp className="h-4 w-4 text-muted-foreground" />}
-              </CardAction>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold tabular-nums @[250px]/card:text-3xl">
-                {stat.loading ? (
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                ) : (
-                  stat.value.toLocaleString()
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        {siteStats.map((stat, index) => {
+          const Icon = stat.icon
+          return (
+            <Card 
+              key={stat.title} 
+              className={cn(
+                "border-border/60 transition-all duration-200 hover:shadow-md hover:border-border animate-fade-up",
+              )}
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  {stat.title}
+                </CardTitle>
+                <CardAction>
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted">
+                    <Icon className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </CardAction>
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold tabular-nums tracking-tight">
+                  {stat.loading ? (
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  ) : (
+                    stat.value.toLocaleString()
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
 
       {/* 访问排行 */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BarChart3 className="h-5 w-5" />
-            网站访问排行
-          </CardTitle>
+      <Card className="border-border/60">
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-muted-foreground" />
+            <CardTitle className="text-lg font-medium">网站访问排行</CardTitle>
+          </div>
           <CardDescription>{getTimeRangeLabel(timeRange)}热门网站</CardDescription>
           <CardAction>
             <ToggleGroup
@@ -172,26 +201,26 @@ export default function AdminDashboardPage() {
               variant="outline"
               className="hidden md:flex"
             >
-              <ToggleGroupItem value="5" className="rounded-r-none">Top 5</ToggleGroupItem>
-              <ToggleGroupItem value="10" className="rounded-none border-l-0">Top 10</ToggleGroupItem>
-              <ToggleGroupItem value="30" className="rounded-none border-l-0">Top 30</ToggleGroupItem>
-              <ToggleGroupItem value="0" className="rounded-l-none border-l-0">All</ToggleGroupItem>
+              <ToggleGroupItem value="5" className="text-xs px-2.5 h-8">Top 5</ToggleGroupItem>
+              <ToggleGroupItem value="10" className="text-xs px-2.5 h-8">Top 10</ToggleGroupItem>
+              <ToggleGroupItem value="30" className="text-xs px-2.5 h-8">Top 30</ToggleGroupItem>
+              <ToggleGroupItem value="0" className="text-xs px-2.5 h-8">All</ToggleGroupItem>
             </ToggleGroup>
             <Select
               value={topCount.toString()}
               onValueChange={(value) => setTopCount(Number(value) as 5 | 10 | 30 | 0)}
             >
               <SelectTrigger
-                className="flex w-28 md:hidden"
+                className="flex w-24 md:hidden h-8 text-xs"
                 aria-label="选择显示数量"
               >
                 <SelectValue placeholder="选择数量" />
               </SelectTrigger>
-              <SelectContent className="rounded-xl">
-                <SelectItem value="5" className="rounded-lg">Top 5</SelectItem>
-                <SelectItem value="10" className="rounded-lg">Top 10</SelectItem>
-                <SelectItem value="30" className="rounded-lg">Top 30</SelectItem>
-                <SelectItem value="0" className="rounded-lg">All</SelectItem>
+              <SelectContent className="rounded-lg">
+                <SelectItem value="5" className="text-xs">Top 5</SelectItem>
+                <SelectItem value="10" className="text-xs">Top 10</SelectItem>
+                <SelectItem value="30" className="text-xs">Top 30</SelectItem>
+                <SelectItem value="0" className="text-xs">All</SelectItem>
               </SelectContent>
             </Select>
           </CardAction>
@@ -200,55 +229,70 @@ export default function AdminDashboardPage() {
           {visitStats && visitStats.topSites.length > 0 ? (
             <Table>
               <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12">排名</TableHead>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="w-14">排名</TableHead>
                   <TableHead>网站名称</TableHead>
-                  <TableHead className="text-right">访问次数</TableHead>
+                  <TableHead className="text-right w-28">访问次数</TableHead>
                 </TableRow>
               </TableHeader>
-            <TableBody>
-              {visitStats.topSites.map((site, index) => (
-                <TableRow key={site.id}>
-                  <TableCell className="font-medium">
-                    {index === 0 && (
-                      <Badge variant="default">1</Badge>
-                    )}
-                    {index === 1 && (
-                      <Badge variant="secondary">2</Badge>
-                    )}
-                    {index === 2 && (
-                      <Badge variant="secondary">3</Badge>
-                    )}
-                    {index > 2 && (
-                      <span className="text-muted-foreground">#{index + 1}</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {site.iconUrl && (
-                        <img
-                          src={site.iconUrl}
-                          alt={site.name}
-                          className="h-5 w-5 rounded"
-                        />
+              <TableBody>
+                {visitStats.topSites.map((site, index) => (
+                  <TableRow key={site.id} className="group">
+                    <TableCell className="font-medium">
+                      {index === 0 && (
+                        <Badge className="bg-amber-500 hover:bg-amber-500/90 text-amber-50">1</Badge>
                       )}
-                      <span className="font-medium">{site.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <span className="font-semibold">{site.visitCount.toLocaleString()}</span>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <div className="text-center py-8 text-muted-foreground">
-            暂无访问数据
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                      {index === 1 && (
+                        <Badge variant="secondary" className="bg-slate-300 text-slate-700">2</Badge>
+                      )}
+                      {index === 2 && (
+                        <Badge variant="secondary" className="bg-amber-200 text-amber-700">3</Badge>
+                      )}
+                      {index > 2 && (
+                        <span className="text-muted-foreground text-sm ml-1">#{index + 1}</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2.5">
+                        {site.iconUrl ? (
+                          <img
+                            src={site.iconUrl}
+                            alt={site.name}
+                            className="h-6 w-6 rounded object-contain bg-muted/30"
+                          />
+                        ) : (
+                          <div className="h-6 w-6 rounded bg-muted flex items-center justify-center text-xs font-medium text-muted-foreground">
+                            {site.name.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                        <span className="font-medium group-hover:text-foreground transition-colors">
+                          {site.name}
+                        </span>
+                        <a
+                          href={site.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <ArrowUpRight className="h-3.5 w-3.5 text-muted-foreground hover:text-foreground" />
+                        </a>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <span className="font-semibold tabular-nums">{site.visitCount.toLocaleString()}</span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
+              <BarChart3 className="h-10 w-10 opacity-50 mb-3" />
+              <p className="text-sm">暂无访问数据</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* 访问频次统计 */}
       {frequencyData && (
