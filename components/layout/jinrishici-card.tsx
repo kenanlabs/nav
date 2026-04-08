@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Loader2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 // jinrishici 模块的类型定义
 interface PoetryData {
@@ -99,13 +100,13 @@ export function JinrishiciCard({ onClose }: JinrishiciCardProps) {
 
   if (loading) {
     return (
-      <Card>
+      <Card className="relative border-border/60 shadow-sm">
         {onClose && (
           <div className="absolute top-2 right-2 z-10">
             <Button
               variant="ghost"
               size="icon"
-              className="h-6 w-6"
+              className="h-6 w-6 hover:bg-muted"
               onClick={onClose}
             >
               <X className="h-3 w-3" />
@@ -113,7 +114,7 @@ export function JinrishiciCard({ onClose }: JinrishiciCardProps) {
           </div>
         )}
         <CardContent className="flex items-center justify-center py-8">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
         </CardContent>
       </Card>
     )
@@ -124,13 +125,16 @@ export function JinrishiciCard({ onClose }: JinrishiciCardProps) {
   }
 
   return (
-    <Card className="relative group">
+    <Card className={cn(
+      "relative group border-border/60 shadow-sm",
+      "transition-all duration-200 hover:shadow-md hover:border-border"
+    )}>
       {onClose && (
         <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
           <Button
             variant="ghost"
             size="icon"
-            className="h-6 w-6"
+            className="h-6 w-6 hover:bg-muted"
             onClick={onClose}
           >
             <X className="h-3 w-3" />
@@ -138,7 +142,7 @@ export function JinrishiciCard({ onClose }: JinrishiciCardProps) {
         </div>
       )}
 
-      <CardContent className="px-8 flex justify-center">
+      <CardContent className="px-6 py-4 flex justify-center">
         {/* 竖向排列容器：从右到左 */}
         <div
           className="font-lxgw-wenkai text-foreground"
@@ -151,20 +155,20 @@ export function JinrishiciCard({ onClose }: JinrishiciCardProps) {
             textOrientation: 'upright',
             WebkitTextOrientation: 'upright',
             height: 'auto',
-            minHeight: '200px',
-            letterSpacing: '0.2em',
-            lineHeight: '2',
+            minHeight: '180px',
+            letterSpacing: '0.15em',
+            lineHeight: '1.8',
           }}
         >
           {/* 诗句 */}
-          <div className="text-xl">
+          <div className="text-lg">
             {poetry.content}
           </div>
 
           {/* 出处信息 */}
-          <div className="text-sm text-muted-foreground mt-0" style={{ marginLeft: '0.8em' }}>
+          <div className="text-xs text-muted-foreground mt-0" style={{ marginLeft: '0.6em' }}>
             <span className="font-medium">《{poetry.origin.title}》</span>
-            <span className="mx-2">·</span>
+            <span className="mx-1.5">·</span>
             <span>{poetry.origin.dynasty}</span>
             <span className="mx-1">·</span>
             <span>{poetry.origin.author}</span>
