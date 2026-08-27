@@ -49,7 +49,13 @@
     "backHome": "홈으로",
     "searchSr": "검색",
     "searchPlaceholder": "검색... (단축키 /)",
-    "clearSearch": "검색어 지우기"
+    "clearSearch": "검색어 지우기",
+    "about": "소개"
+  },
+  "about": {
+    "title": "소개",
+    "emptyTitle": "아직 내용이 없습니다",
+    "emptyDesc": "관리자가 아직 이 페이지에 내용을 작성하지 않았습니다."
   },
   "siteCard": {
     "visit": "{name} 방문",
@@ -533,6 +539,16 @@
       "secFeaturesDesc": "시스템 기능을 켜거나 끕니다",
       "secLinksDesc": "외부 링크 설정",
       "secFooterDesc": "페이지 하단 정보 설정",
+      "secAbout": "소개 페이지",
+      "secAboutDesc": "공개 소개 페이지의 진입점과 내용을 설정합니다",
+      "aboutEnableLabel": "소개 페이지 사용",
+      "aboutEnableHint": "활성화하면 상단 내비게이션에 소개 페이지 항목이 표시되고 /about 페이지에 접근할 수 있습니다",
+      "aboutContentLabel": "페이지 내용 (Markdown)",
+      "aboutContentPlaceholder": "Markdown 내용을 입력하세요...",
+      "aboutMdEdit": "편집",
+      "aboutMdPreview": "미리보기",
+      "aboutContentEmpty": "내용이 없습니다",
+      "aboutContentHint": "Markdown 문법을 지원합니다. 저장 후 공개 /about 페이지에 즉시 반영됩니다.",
       "siteNameLabel": "사이트 이름",
       "siteNamePlaceholder": "사이트 이름 입력",
       "siteNameHint": "브라우저 탭과 페이지 제목에 표시됩니다",

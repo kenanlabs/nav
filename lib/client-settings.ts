@@ -15,6 +15,8 @@ export interface PublicSettings {
   enableSubmission: boolean
   enableSiteDetail: boolean
   enablePoetry: boolean
+  enableAbout: boolean
+  aboutContent: string | null
   submissionMaxPerDay: number
   githubUrl: string | null
   defaultLanguage: string
@@ -37,6 +39,8 @@ export const defaultSettings: PublicSettings = {
   enableSubmission: true,
   enableSiteDetail: false,
   enablePoetry: true,
+  enableAbout: true,
+  aboutContent: null,
   submissionMaxPerDay: 3,
   githubUrl: "https://github.com/kenanlabs/nav",
   defaultLanguage: "zh",

@@ -20,7 +20,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer"
 import { useMediaQuery } from "@/hooks/use-media-query"
-import { Search, X } from "lucide-react"
+import { Info, Search, X } from "lucide-react"
 import { fetchPublicSettings } from "@/lib/client-settings"
 import { CategoryIcon, CategoryIconBadge } from "@/components/category-icon"
 
@@ -52,6 +52,7 @@ export function Header({
 }: HeaderProps) {
   const [logo, setLogo] = useState<string | null>(siteLogo)
   const [enableSubmission, setEnableSubmission] = useState<boolean>(true)
+  const [enableAbout, setEnableAbout] = useState<boolean>(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
@@ -69,6 +70,7 @@ export function Header({
       if (!cancelled) {
         if (settings.siteLogo) setLogo(settings.siteLogo)
         setEnableSubmission(settings.enableSubmission ?? true)
+        setEnableAbout(settings.enableAbout ?? true)
       }
     }
 
@@ -196,6 +198,22 @@ export function Header({
                       <span>{category.name}</span>
                     </Link>
                   ))}
+
+                  {/* 关于页面入口 */}
+                  {enableAbout && (
+                    <Link
+                      href="/about"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`flex items-center gap-2.5 py-3 px-4 rounded-md transition-colors ${
+                        currentCategory === "about"
+                          ? "bg-accent text-foreground font-medium"
+                          : "text-muted-foreground hover:bg-accent hover:text-foreground"
+                      }`}
+                    >
+                      <Info className="h-4 w-4 shrink-0" />
+                      <span>{t("about")}</span>
+                    </Link>
+                  )}
                 </div>
               </DrawerContent>
             </Drawer>
@@ -248,6 +266,17 @@ export function Header({
           </nav>
 
           <div className="flex-shrink-0 ml-auto pl-2 sm:pl-4 flex items-center gap-2">
+            {/* 关于页面入口 */}
+            {enableAbout && (
+              <Link
+                href="/about"
+                className="hidden md:inline-flex h-9 items-center gap-1.5 rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground whitespace-nowrap"
+              >
+                <Info className="h-3.5 w-3.5 shrink-0" />
+                {t("about")}
+              </Link>
+            )}
+
             <div className="relative hidden sm:block group">
               <Label htmlFor="search" className="sr-only">{t("searchSr")}</Label>
               <Search className="absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground pointer-events-none select-none transition-colors group-focus-within:text-foreground" />

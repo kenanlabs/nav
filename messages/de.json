@@ -49,7 +49,13 @@
     "backHome": "Zurück zur Startseite",
     "searchSr": "Suchen",
     "searchPlaceholder": "Suchen... (Kürzel /)",
-    "clearSearch": "Suche löschen"
+    "clearSearch": "Suche löschen",
+    "about": "Über"
+  },
+  "about": {
+    "title": "Über",
+    "emptyTitle": "Noch kein Inhalt",
+    "emptyDesc": "Der Administrator hat dieser Seite noch keinen Inhalt hinzugefügt."
   },
   "siteCard": {
     "visit": "{name} besuchen",
@@ -533,6 +539,16 @@
       "secFeaturesDesc": "Systemfunktionen ein- oder ausschalten",
       "secLinksDesc": "Externe Links konfigurieren",
       "secFooterDesc": "Footer-Inhalte konfigurieren",
+      "secAbout": "Über-Seite",
+      "secAboutDesc": "Eintrag und Inhalt der öffentlichen Über-Seite konfigurieren",
+      "aboutEnableLabel": "Über-Seite aktivieren",
+      "aboutEnableHint": "Zeigt einen Eintrag in der Navigation und macht /about zugänglich",
+      "aboutContentLabel": "Seiteninhalt (Markdown)",
+      "aboutContentPlaceholder": "Markdown-Inhalt eingeben...",
+      "aboutMdEdit": "Bearbeiten",
+      "aboutMdPreview": "Vorschau",
+      "aboutContentEmpty": "Kein Inhalt",
+      "aboutContentHint": "Unterstützt Markdown-Syntax. Änderungen werden nach dem Speichern auf der öffentlichen /about-Seite wirksam.",
       "siteNameLabel": "Seitenname",
       "siteNamePlaceholder": "Seitennamen eingeben",
       "siteNameHint": "Wird im Browser-Tab und Seitentitel angezeigt",

@@ -49,7 +49,13 @@
     "backHome": "返回首页",
     "searchSr": "搜索",
     "searchPlaceholder": "搜索... (快捷键 /)",
-    "clearSearch": "清除搜索"
+    "clearSearch": "清除搜索",
+    "about": "关于"
+  },
+  "about": {
+    "title": "关于",
+    "emptyTitle": "暂无内容",
+    "emptyDesc": "管理员尚未填写关于页内容"
   },
   "siteCard": {
     "visit": "访问 {name}",
@@ -533,6 +539,16 @@
       "secFeaturesDesc": "启用或禁用系统功能",
       "secLinksDesc": "配置外部链接",
       "secFooterDesc": "配置页面底部信息",
+      "secAbout": "关于页面",
+      "secAboutDesc": "配置前台「关于」页面的入口与内容",
+      "aboutEnableLabel": "启用关于页面",
+      "aboutEnableHint": "开启后在顶部导航显示「关于」入口，并允许访问 /about",
+      "aboutContentLabel": "页面内容（Markdown）",
+      "aboutContentPlaceholder": "输入 Markdown 内容...",
+      "aboutMdEdit": "编辑",
+      "aboutMdPreview": "预览",
+      "aboutContentEmpty": "暂无内容",
+      "aboutContentHint": "支持 Markdown 语法，保存后前台 /about 页面立即生效",
       "siteNameLabel": "网站名称",
       "siteNamePlaceholder": "请输入网站名称",
       "siteNameHint": "显示在浏览器标签和页面标题中",

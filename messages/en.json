@@ -49,7 +49,13 @@
     "backHome": "Back to home",
     "searchSr": "Search",
     "searchPlaceholder": "Search... (press /)",
-    "clearSearch": "Clear search"
+    "clearSearch": "Clear search",
+    "about": "About"
+  },
+  "about": {
+    "title": "About",
+    "emptyTitle": "Nothing here yet",
+    "emptyDesc": "The administrator has not added any content to this page yet."
   },
   "siteCard": {
     "visit": "Visit {name}",
@@ -533,6 +539,16 @@
       "secFeaturesDesc": "Enable or disable system features",
       "secLinksDesc": "Configure external links",
       "secFooterDesc": "Configure page footer content",
+      "secAbout": "About Page",
+      "secAboutDesc": "Configure the public About page entry and content",
+      "aboutEnableLabel": "Enable About page",
+      "aboutEnableHint": "Show an About entry in the header navigation and make /about accessible",
+      "aboutContentLabel": "Page content (Markdown)",
+      "aboutContentPlaceholder": "Write Markdown content...",
+      "aboutMdEdit": "Edit",
+      "aboutMdPreview": "Preview",
+      "aboutContentEmpty": "No content yet",
+      "aboutContentHint": "Supports Markdown syntax. Changes take effect on the public /about page after saving.",
       "siteNameLabel": "Site name",
       "siteNamePlaceholder": "Enter site name",
       "siteNameHint": "Shown in the browser tab and page title",

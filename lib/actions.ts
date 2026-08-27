@@ -1184,6 +1184,8 @@ const ALLOWED_SETTINGS_FIELDS = [
   "submissionMaxPerDay",
   "githubUrl",
   "defaultLanguage",
+  "enableAbout",
+  "aboutContent",
 ] as const
 
 export async function updateSystemSettings(data: {
@@ -1206,6 +1208,8 @@ export async function updateSystemSettings(data: {
   submissionMaxPerDay?: number
   githubUrl?: string
   defaultLanguage?: Locale
+  enableAbout?: boolean
+  aboutContent?: string | null
 }) {
   const unauthorized = await requireAdmin()
   if (unauthorized) return unauthorized
@@ -1243,6 +1247,7 @@ export async function updateSystemSettings(data: {
 
     revalidatePath("/admin/settings")
     revalidatePath("/")
+    revalidatePath("/about")
     revalidatePath("/admin/dashboard")
 
     return { success: true, data: settings }

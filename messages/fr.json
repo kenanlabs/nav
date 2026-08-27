@@ -49,7 +49,13 @@
     "backHome": "Retour à l'accueil",
     "searchSr": "Rechercher",
     "searchPlaceholder": "Rechercher... (raccourci /)",
-    "clearSearch": "Effacer la recherche"
+    "clearSearch": "Effacer la recherche",
+    "about": "À propos"
+  },
+  "about": {
+    "title": "À propos",
+    "emptyTitle": "Aucun contenu pour le moment",
+    "emptyDesc": "L'administrateur n'a pas encore ajouté de contenu à cette page."
   },
   "siteCard": {
     "visit": "Visiter {name}",
@@ -533,6 +539,16 @@
       "secFeaturesDesc": "Activer ou désactiver les fonctionnalités",
       "secLinksDesc": "Configurer les liens externes",
       "secFooterDesc": "Configurer le pied de page",
+      "secAbout": "Page À propos",
+      "secAboutDesc": "Configurer l'entrée et le contenu de la page « À propos » publique",
+      "aboutEnableLabel": "Activer la page À propos",
+      "aboutEnableHint": "Affiche une entrée « À propos » dans la navigation et rend /about accessible",
+      "aboutContentLabel": "Contenu de la page (Markdown)",
+      "aboutContentPlaceholder": "Saisir le contenu Markdown...",
+      "aboutMdEdit": "Modifier",
+      "aboutMdPreview": "Aperçu",
+      "aboutContentEmpty": "Aucun contenu",
+      "aboutContentHint": "Prend en charge la syntaxe Markdown. Les modifications sont appliquées à la page /about après enregistrement.",
       "siteNameLabel": "Nom du site",
       "siteNamePlaceholder": "Saisir le nom du site",
       "siteNameHint": "Affiché dans l'onglet du navigateur et le titre de la page",

@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
-import { Loader2, Plus, Trash2, Info, Zap, Link2, PanelBottom, TriangleAlert } from "lucide-react"
+import { Loader2, Plus, Trash2, Info, Zap, Link2, PanelBottom, FileText, TriangleAlert, Pencil, Eye } from "lucide-react"
 import { getSystemSettings, updateSystemSettings, isMemoryMode } from "@/lib/actions"
 import { useTranslations } from "next-intl"
 import { locales, localeNames, isLocale, type Locale } from "@/lib/i18n"
@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { MarkdownContent } from "@/components/markdown-content"
 
 interface SystemSettingsData {
   id: string
@@ -42,6 +43,8 @@ interface SystemSettingsData {
   icpNumber: string | undefined
   icpLink: string | undefined
   defaultLanguage: Locale
+  enableAbout: boolean
+  aboutContent: string | undefined
 }
 
 const sections = [
@@ -49,6 +52,7 @@ const sections = [
   { id: "features", titleKey: "secFeatures", icon: Zap },
   { id: "links", titleKey: "secLinks", icon: Link2 },
   { id: "footer", titleKey: "secFooter", icon: PanelBottom },
+  { id: "about", titleKey: "secAbout", icon: FileText },
 ] as const
 
 type SectionId = (typeof sections)[number]["id"]
@@ -77,10 +81,13 @@ export default function AdminSettingsPage() {
     icpNumber: undefined,
     icpLink: undefined,
     defaultLanguage: "zh",
+    enableAbout: true,
+    aboutContent: undefined,
   })
   const [savingSettings, setSavingSettings] = useState(false)
   const [activeSection, setActiveSection] = useState<SectionId>("basic")
   const [memoryMode, setMemoryMode] = useState(false)
+  const [aboutMdView, setAboutMdView] = useState<"edit" | "preview">("edit")
 
   // 加载数据
   useEffect(() => {
@@ -107,6 +114,8 @@ export default function AdminSettingsPage() {
         enablePoetry: result.data.enablePoetry ?? true,
         submissionMaxPerDay: result.data.submissionMaxPerDay ?? 3,
         defaultLanguage: isLocale(result.data.defaultLanguage) ? result.data.defaultLanguage : "zh",
+        enableAbout: result.data.enableAbout ?? true,
+        aboutContent: result.data.aboutContent || undefined,
       })
     }
   }
@@ -162,6 +171,7 @@ export default function AdminSettingsPage() {
     features: { title: t("secFeatures"), description: t("secFeaturesDesc") },
     links: { title: t("secLinks"), description: t("secLinksDesc") },
     footer: { title: t("secFooter"), description: t("secFooterDesc") },
+    about: { title: t("secAbout"), description: t("secAboutDesc") },
   }
 
   return (
@@ -517,6 +527,73 @@ export default function AdminSettingsPage() {
                       </Button>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {/* 关于页面 */}
+            {activeSection === "about" && (
+              <div className="space-y-8">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="enable-about">{t("aboutEnableLabel")}</Label>
+                    <p className="text-sm text-muted-foreground">
+                      {t("aboutEnableHint")}
+                    </p>
+                  </div>
+                  <Switch
+                    id="enable-about"
+                    checked={settings.enableAbout}
+                    onCheckedChange={(checked) => setSettings({ ...settings, enableAbout: checked })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="about-content">{t("aboutContentLabel")}</Label>
+                    <div className="flex items-center rounded-md border p-0.5">
+                      <button
+                        type="button"
+                        onClick={() => setAboutMdView("edit")}
+                        className={`flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors ${
+                          aboutMdView === "edit" ? "bg-muted font-medium" : "text-muted-foreground"
+                        }`}
+                      >
+                        <Pencil className="h-3 w-3" />
+                        {t("aboutMdEdit")}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setAboutMdView("preview")}
+                        className={`flex items-center gap-1 rounded px-2 py-1 text-xs transition-colors ${
+                          aboutMdView === "preview" ? "bg-muted font-medium" : "text-muted-foreground"
+                        }`}
+                      >
+                        <Eye className="h-3 w-3" />
+                        {t("aboutMdPreview")}
+                      </button>
+                    </div>
+                  </div>
+                  {aboutMdView === "edit" ? (
+                    <Textarea
+                      id="about-content"
+                      value={settings.aboutContent || ""}
+                      onChange={(e) => setSettings({ ...settings, aboutContent: e.target.value })}
+                      placeholder={t("aboutContentPlaceholder")}
+                      rows={12}
+                      className="font-mono text-xs"
+                    />
+                  ) : (
+                    <div className="min-h-[200px] min-w-0 max-w-full overflow-x-hidden rounded-md border bg-muted/10 p-4">
+                      {settings.aboutContent?.trim() ? (
+                        <MarkdownContent content={settings.aboutContent} />
+                      ) : (
+                        <p className="text-sm text-muted-foreground">{t("aboutContentEmpty")}</p>
+                      )}
+                    </div>
+                  )}
+                  <p className="text-sm text-muted-foreground">
+                    {t("aboutContentHint")}
+                  </p>
                 </div>
               </div>
             )}
