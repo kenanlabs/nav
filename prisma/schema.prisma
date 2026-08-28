@@ -20,6 +20,8 @@ model Workspace {
   siteDescription String?    @map("site_description")
   siteLogo        String?    @map("site_logo")
   favicon         String?
+  // About 页内容覆盖项：为空时回退 SystemSettings.aboutContent
+  aboutContent    String?    @map("about_content")
   isDefault       Boolean    @default(false) @map("is_default")
   // 未发布工作区对前台按「未匹配域名」处理（渲染默认工作区）
   isPublished     Boolean    @default(false) @map("is_published")
@@ -155,6 +157,9 @@ model SystemSettings {
   enableSiteDetail     Boolean  @default(false) @map("enable_site_detail")
   // Poetry card (今日诗词卡片总开关)
   enablePoetry         Boolean  @default(true) @map("enable_poetry")
+  // About page (关于页面总开关；内容按工作区覆盖，空则回退 aboutContent)
+  enableAboutPage      Boolean  @default(false) @map("enable_about_page")
+  aboutContent         String?  @map("about_content")
   // GitHub link
   githubUrl        String?  @map("github_url")
   // Default site language for visitors without a locale cookie (zh/en)

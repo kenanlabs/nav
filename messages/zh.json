@@ -75,6 +75,9 @@
     "noCategoriesTitle": "暂无分类数据",
     "noCategoriesDesc": "请先在后台创建分类和网站"
   },
+  "about": {
+    "title": "关于"
+  },
   "category": {
     "siteCount": "共 {count} 个网站",
     "noSitesTitle": "该分类下暂无网站",
@@ -86,7 +89,8 @@
     "backHome": "返回首页"
   },
   "footer": {
-    "admin": "管理后台"
+    "admin": "管理后台",
+    "about": "关于"
   },
   "submission": {
     "trigger": "提交网站",
@@ -585,7 +589,18 @@
       "memoryModeToastDesc": "未连接数据库，设置会在实例重启或回收后重置。站点详情等功能需要连接数据库才能持久生效。",
       "workspaceContext": "当前工作区：{name}",
       "workspaceIsDefault": "（全局配置）",
-      "workspaceOverrideHint": "此处展示项仅对当前工作区生效，留空回退全局设置"
+      "workspaceOverrideHint": "此处展示项仅对当前工作区生效，留空回退全局设置",
+      "secAbout": "关于页面",
+      "secAboutDesc": "关于页面的显示开关与内容（内容按工作区区分）",
+      "aboutEnableLabel": "启用关于页面",
+      "aboutEnableHint": "开启后前台显示 /about 页面，并在页脚展示入口链接",
+      "aboutContentLabel": "关于内容（Markdown）",
+      "aboutContentPlaceholder": "支持 Markdown 语法，例如：\n\n# 关于我们\n\n这里介绍本站……",
+      "aboutContentHint": "支持 Markdown（GFM）；不解析原始 HTML。留空时前台回退全局默认内容",
+      "aboutTabEdit": "编辑",
+      "aboutTabPreview": "预览",
+      "aboutEmptyPreview": "暂无内容",
+      "aboutFallbackHint": "当前内容为空，前台将展示全局默认内容"
     },
     "profile": {
       "admin": "管理员",

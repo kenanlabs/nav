@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { useTranslations } from "next-intl"
 import { Separator } from "@/components/ui/separator"
 import { fetchPublicSettings, type PublicSettings } from "@/lib/client-settings"
@@ -86,6 +87,18 @@ export function Footer() {
                       {link.name}
                     </a>
                   ))}
+                  <Separator orientation="vertical" className="h-4" />
+                </>
+              )}
+              {/* 关于页面 - 根据设置显示或隐藏 */}
+              {settings?.enableAboutPage && (
+                <>
+                  <Link
+                    href="/about"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    {t("about")}
+                  </Link>
                   <Separator orientation="vertical" className="h-4" />
                 </>
               )}

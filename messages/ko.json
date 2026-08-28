@@ -75,6 +75,9 @@
     "noCategoriesTitle": "카테고리 없음",
     "noCategoriesDesc": "먼저 관리자 페이지에서 카테고리와 사이트를 생성하세요"
   },
+  "about": {
+    "title": "소개"
+  },
   "category": {
     "siteCount": "{count}개 사이트",
     "noSitesTitle": "이 카테고리에 사이트가 없습니다",
@@ -86,7 +89,8 @@
     "backHome": "홈으로"
   },
   "footer": {
-    "admin": "관리자"
+    "admin": "관리자",
+    "about": "소개"
   },
   "submission": {
     "trigger": "사이트 제출",
@@ -585,7 +589,18 @@
       "memoryModeToastDesc": "데이터베이스에 연결되지 않아 설정은 인스턴스 재시작 또는 재활용 후 초기화됩니다. 사이트 상세 등의 기능은 데이터베이스 연결이 필요합니다.",
       "workspaceContext": "현재 워크스페이스: {name}",
       "workspaceIsDefault": "(전역 설정)",
-      "workspaceOverrideHint": "여기 표시 항목은 현재 워크스페이스에만 적용되며, 빈 값은 전역 설정으로 대체됩니다"
+      "workspaceOverrideHint": "여기 표시 항목은 현재 워크스페이스에만 적용되며, 빈 값은 전역 설정으로 대체됩니다",
+      "secAbout": "소개 페이지",
+      "secAboutDesc": "소개 페이지 표시 여부와 콘텐츠 (콘텐츠는 워크스페이스별)",
+      "aboutEnableLabel": "소개 페이지 사용",
+      "aboutEnableHint": "사용 시 /about 페이지가 표시되고 푸터에 링크가 추가됩니다",
+      "aboutContentLabel": "소개 내용 (Markdown)",
+      "aboutContentPlaceholder": "Markdown 문법 지원. 예:\n\n# 사이트 소개\n\n사이트를 소개하는 내용을 여기에 작성하세요",
+      "aboutContentHint": "Markdown(GFM) 지원, 원시 HTML은 렌더링되지 않습니다. 비워 두면 전역 기본 콘텐츠를 표시합니다",
+      "aboutTabEdit": "편집",
+      "aboutTabPreview": "미리보기",
+      "aboutEmptyPreview": "콘텐츠가 없습니다",
+      "aboutFallbackHint": "콘텐츠가 비어 있어 전역 기본 콘텐츠가 표시됩니다"
     },
     "profile": {
       "admin": "관리자",

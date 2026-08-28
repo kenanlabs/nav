@@ -75,6 +75,9 @@
     "noCategoriesTitle": "Keine Kategorien",
     "noCategoriesDesc": "Erstellen Sie zuerst Kategorien und Seiten in der Verwaltung"
   },
+  "about": {
+    "title": "Über"
+  },
   "category": {
     "siteCount": "{count} Seiten",
     "noSitesTitle": "Keine Seiten in dieser Kategorie",
@@ -86,7 +89,8 @@
     "backHome": "Zurück zur Startseite"
   },
   "footer": {
-    "admin": "Admin"
+    "admin": "Admin",
+    "about": "Über"
   },
   "submission": {
     "trigger": "Seite vorschlagen",
@@ -585,7 +589,18 @@
       "memoryModeToastDesc": "Keine Datenbank verbunden. Einstellungen werden nach Neustart oder Recycling zurückgesetzt. Funktionen wie Site-Details benötigen eine Datenbank.",
       "workspaceContext": "Aktueller Workspace: {name}",
       "workspaceIsDefault": " (globale Konfiguration)",
-      "workspaceOverrideHint": "Diese Anzeigefelder gelten nur für diesen Workspace; leere Felder fallen auf die globalen Einstellungen zurück"
+      "workspaceOverrideHint": "Diese Anzeigefelder gelten nur für diesen Workspace; leere Felder fallen auf die globalen Einstellungen zurück",
+      "secAbout": "Über-Seite",
+      "secAboutDesc": "Schalter und Inhalt der Über-Seite (Inhalt pro Workspace)",
+      "aboutEnableLabel": "Über-Seite aktivieren",
+      "aboutEnableHint": "Wenn aktiviert, wird die /about-Seite mit einem Link im Footer angezeigt",
+      "aboutContentLabel": "Über-Inhalt (Markdown)",
+      "aboutContentPlaceholder": "Markdown wird unterstützt, z. B.:\n\n# Über uns\n\nBeschreiben Sie diese Seite ...",
+      "aboutContentHint": "Markdown (GFM) wird unterstützt; rohes HTML wird nicht gerendert. Leer lassen, um auf den globalen Standardinhalt zurückzufallen",
+      "aboutTabEdit": "Bearbeiten",
+      "aboutTabPreview": "Vorschau",
+      "aboutEmptyPreview": "Noch kein Inhalt",
+      "aboutFallbackHint": "Der Inhalt ist leer; der globale Standardinhalt wird angezeigt"
     },
     "profile": {
       "admin": "Admin",

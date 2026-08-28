@@ -127,6 +127,7 @@ export async function getWorkspaceDisplaySettings() {
             siteDescription: settings?.siteDescription ?? "",
             siteLogo: settings?.siteLogo ?? "",
             favicon: settings?.favicon ?? "",
+            aboutContent: settings?.aboutContent ?? "",
           },
         },
       }
@@ -141,6 +142,7 @@ export async function getWorkspaceDisplaySettings() {
           siteDescription: workspace.siteDescription ?? "",
           siteLogo: workspace.siteLogo ?? "",
           favicon: workspace.favicon ?? "",
+          aboutContent: workspace.aboutContent ?? "",
         },
       },
     }
@@ -157,6 +159,7 @@ export async function updateWorkspaceDisplaySettings(data: {
   siteDescription: string
   siteLogo: string
   favicon: string
+  aboutContent?: string
 }) {
   const unauthorized = await requireAdmin()
   if (unauthorized) return unauthorized
@@ -169,6 +172,7 @@ export async function updateWorkspaceDisplaySettings(data: {
         siteDescription: data.siteDescription,
         siteLogo: data.siteLogo || undefined,
         favicon: data.favicon || undefined,
+        aboutContent: data.aboutContent,
       })
     }
 
@@ -179,9 +183,11 @@ export async function updateWorkspaceDisplaySettings(data: {
         siteDescription: data.siteDescription.trim() || null,
         siteLogo: data.siteLogo.trim() || null,
         favicon: data.favicon.trim() || null,
+        aboutContent: data.aboutContent?.trim() || null,
       },
     })
     revalidatePath("/", "layout")
+    revalidatePath("/about")
     revalidatePath("/admin/workspaces")
     return { success: true, data: updated }
   } catch (error) {
@@ -1607,6 +1613,20 @@ export async function getDisplaySettings() {
   }
 }
 
+// About 页数据：总开关取全局 SystemSettings，内容按工作区覆盖、空则回退全局。
+// 仅供 /about 页服务端调用，避免整篇 Markdown 进入公开设置接口
+export async function getAboutPage() {
+  const workspace = await getCurrentWorkspace()
+  const result = await getSystemSettings()
+  const settings = result.success && result.data ? result.data : null
+  return {
+    enabled: settings?.enableAboutPage ?? false,
+    siteName:
+      workspace.siteName || (settings?.siteName ?? "Conan Nav"),
+    content: workspace.aboutContent || settings?.aboutContent || "",
+  }
+}
+
 // 允许写入的设置字段白名单：拒绝任意字段注入（如伪造 footerHtml 等）
 const ALLOWED_SETTINGS_FIELDS = [
   "siteName",
@@ -1625,6 +1645,8 @@ const ALLOWED_SETTINGS_FIELDS = [
   "enableSubmission",
   "enableSiteDetail",
   "enablePoetry",
+  "enableAboutPage",
+  "aboutContent",
   "submissionMaxPerDay",
   "githubUrl",
   "defaultLanguage",
@@ -1647,6 +1669,8 @@ export async function updateSystemSettings(data: {
   enableSubmission?: boolean
   enableSiteDetail?: boolean
   enablePoetry?: boolean
+  enableAboutPage?: boolean
+  aboutContent?: string | null
   submissionMaxPerDay?: number
   githubUrl?: string
   defaultLanguage?: Locale
@@ -1687,6 +1711,7 @@ export async function updateSystemSettings(data: {
 
     revalidatePath("/admin/settings")
     revalidatePath("/")
+    revalidatePath("/about")
     revalidatePath("/admin/dashboard")
 
     return { success: true, data: settings }

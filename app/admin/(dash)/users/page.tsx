@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Separator } from "@/components/ui/separator"
-import { Loader2, Plus, Trash2, Info, Zap, Link2, PanelBottom, TriangleAlert, Layers } from "lucide-react"
+import { Loader2, Plus, Trash2, Info, Zap, Link2, PanelBottom, TriangleAlert, Layers, FileText } from "lucide-react"
 import {
   getSystemSettings,
   updateSystemSettings,
@@ -26,6 +26,8 @@ import {
 } from "@/components/ui/select"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { MarkdownContent } from "@/components/markdown-content"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface SystemSettingsData {
   id: string
@@ -45,6 +47,10 @@ interface SystemSettingsData {
   enableSubmission: boolean
   enableSiteDetail: boolean
   enablePoetry: boolean
+  enableAboutPage: boolean
+  aboutContent: string | undefined
+  // 非默认工作区上下文时，全局设置的回退值（提示用）
+  aboutContentFallback?: string | null
   submissionMaxPerDay: number
   githubUrl: string | undefined
   showIcp: boolean
@@ -56,6 +62,7 @@ interface SystemSettingsData {
 const sections = [
   { id: "basic", titleKey: "secBasic", icon: Info },
   { id: "features", titleKey: "secFeatures", icon: Zap },
+  { id: "about", titleKey: "secAbout", icon: FileText },
   { id: "links", titleKey: "secLinks", icon: Link2 },
   { id: "footer", titleKey: "secFooter", icon: PanelBottom },
 ] as const
@@ -80,6 +87,8 @@ export default function AdminSettingsPage() {
     enableSubmission: true,
     enableSiteDetail: false,
     enablePoetry: true,
+    enableAboutPage: false,
+    aboutContent: undefined,
     submissionMaxPerDay: 3,
     githubUrl: undefined,
     showIcp: false,
@@ -90,6 +99,7 @@ export default function AdminSettingsPage() {
   const [savingSettings, setSavingSettings] = useState(false)
   const [activeSection, setActiveSection] = useState<SectionId>("basic")
   const [memoryMode, setMemoryMode] = useState(false)
+  const [aboutPreview, setAboutPreview] = useState(false)
   // 当前设置页生效的工作区上下文（基本信息区块按其读写）
   const [workspaceCtx, setWorkspaceCtx] = useState<{
     id: string
@@ -113,12 +123,14 @@ export default function AdminSettingsPage() {
       window.removeEventListener("workspace-context-changed", onWorkspaceChanged)
   }, [])
 
-  // 向顶栏切换器声明当前区块作用域：基本信息随工作区，其余区块全局
+  // 向顶栏切换器声明当前区块作用域：基本信息与关于页随工作区，其余区块全局
   // （切换器据此切换可用/禁用态，替代区块内提示条）
   useEffect(() => {
     window.dispatchEvent(
       new CustomEvent("admin-scope-changed", {
-        detail: { scope: activeSection === "basic" ? "workspace" : "global" },
+        detail: {
+          scope: activeSection === "basic" || activeSection === "about" ? "workspace" : "global",
+        },
       })
     )
   }, [activeSection])
@@ -142,6 +154,9 @@ export default function AdminSettingsPage() {
         favicon: (display ? display.display.favicon : global.favicon) || undefined,
         siteLogoFallback: global.siteLogo,
         faviconFallback: global.favicon,
+        aboutContent: (display ? display.display.aboutContent : global.aboutContent) || undefined,
+        aboutContentFallback: global.aboutContent,
+        enableAboutPage: global.enableAboutPage ?? false,
         footerLinks: (global.footerLinks as Array<{ name: string; url: string }>) || [],
         githubUrl: global.githubUrl || undefined,
         showIcp: global.showIcp || false,
@@ -171,9 +186,17 @@ export default function AdminSettingsPage() {
           siteDescription: settings.siteDescription || "",
           siteLogo: settings.siteLogo || "",
           favicon: settings.favicon || "",
+          aboutContent: settings.aboutContent || "",
         })
         if (result.success) {
-          const { siteName: _n, siteDescription: _d, siteLogo: _l, favicon: _f, ...rest } = settings
+          const {
+            siteName: _n,
+            siteDescription: _d,
+            siteLogo: _l,
+            favicon: _f,
+            aboutContent: _a,
+            ...rest
+          } = settings
           result = await updateSystemSettings(rest)
         }
       } else {
@@ -224,6 +247,7 @@ export default function AdminSettingsPage() {
   const sectionMeta: Record<SectionId, { title: string; description: string }> = {
     basic: { title: t("secBasic"), description: t("secBasicDesc") },
     features: { title: t("secFeatures"), description: t("secFeaturesDesc") },
+    about: { title: t("secAbout"), description: t("secAboutDesc") },
     links: { title: t("secLinks"), description: t("secLinksDesc") },
     footer: { title: t("secFooter"), description: t("secFooterDesc") },
   }
@@ -454,6 +478,85 @@ export default function AdminSettingsPage() {
                         {t("submissionLimitHint", { count: settings.submissionMaxPerDay })}
                       </p>
                     </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* 关于页面 */}
+            {activeSection === "about" && (
+              <div className="space-y-8">
+                {/* 工作区上下文提示 */}
+                {workspaceCtx && (
+                  <div className="flex items-start gap-2 rounded-lg border bg-muted/30 p-3 text-sm">
+                    <Layers className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                    <div>
+                      <p>
+                        {t("workspaceContext", { name: workspaceCtx.name })}
+                        {workspaceCtx.isDefault ? t("workspaceIsDefault") : ""}
+                      </p>
+                      {!workspaceCtx.isDefault && (
+                        <p className="mt-0.5 text-xs text-muted-foreground">
+                          {t("workspaceOverrideHint")}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="enable-about-page">{t("aboutEnableLabel")}</Label>
+                    <p className="text-sm text-muted-foreground">
+                      {t("aboutEnableHint")}
+                    </p>
+                  </div>
+                  <Switch
+                    id="enable-about-page"
+                    checked={settings.enableAboutPage}
+                    onCheckedChange={(checked) => setSettings({ ...settings, enableAboutPage: checked })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Tabs value={aboutPreview ? "preview" : "edit"} onValueChange={(v) => setAboutPreview(v === "preview")}>
+                    <div className="flex items-center justify-between">
+                      <Label htmlFor="about-content">{t("aboutContentLabel")}</Label>
+                      <TabsList className="h-8">
+                        <TabsTrigger value="edit" className="px-3 text-xs">
+                          {t("aboutTabEdit")}
+                        </TabsTrigger>
+                        <TabsTrigger value="preview" className="px-3 text-xs">
+                          {t("aboutTabPreview")}
+                        </TabsTrigger>
+                      </TabsList>
+                    </div>
+                  </Tabs>
+                  {aboutPreview ? (
+                    <div className="min-h-[240px] rounded-md border border-border/60 bg-background p-3">
+                      {settings.aboutContent ? (
+                        <MarkdownContent content={settings.aboutContent} />
+                      ) : (
+                        <p className="py-8 text-center text-xs text-muted-foreground">
+                          {t("aboutEmptyPreview")}
+                        </p>
+                      )}
+                    </div>
+                  ) : (
+                    <Textarea
+                      id="about-content"
+                      value={settings.aboutContent || ""}
+                      onChange={(e) => setSettings({ ...settings, aboutContent: e.target.value })}
+                      placeholder={t("aboutContentPlaceholder")}
+                      rows={12}
+                      className="font-mono text-xs"
+                    />
+                  )}
+                  <p className="text-sm text-muted-foreground">
+                    {t("aboutContentHint")}
+                  </p>
+                  {!workspaceCtx?.isDefault && !settings.aboutContent && (
+                    <p className="text-xs text-muted-foreground">
+                      {t("aboutFallbackHint")}
+                    </p>
                   )}
                 </div>
               </div>

@@ -2,6 +2,7 @@ import { MetadataRoute } from "next"
 import { headers } from "next/headers"
 import { prisma } from "@/lib/prisma"
 import { getCurrentWorkspace } from "@/lib/workspace"
+import { getAboutPage } from "@/lib/actions"
 
 // sitemap 按当前请求域名对应的工作区输出：baseUrl 取实际 Host，
 // 分类页仅输出当前工作区下已发布的分类
@@ -49,7 +50,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     }))
 
-    return [...staticPages, ...categoryPages]
+    // About 页面：仅在启用且有内容时纳入 sitemap（按当前工作区覆盖判断）
+    const about = await getAboutPage()
+    const aboutPages: MetadataRoute.Sitemap =
+      about.enabled && about.content
+        ? [
+            {
+              url: `${baseUrl}/about`,
+              lastModified: new Date(),
+              changeFrequency: "monthly",
+              priority: 0.5,
+            },
+          ]
+        : []
+
+    return [...staticPages, ...aboutPages, ...categoryPages]
   } catch (error) {
     // 数据库不可用时，只返回静态页面
     console.warn("Database unavailable during sitemap generation, returning static pages only")

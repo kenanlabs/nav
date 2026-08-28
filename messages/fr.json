@@ -75,6 +75,9 @@
     "noCategoriesTitle": "Aucune catégorie",
     "noCategoriesDesc": "Créez d'abord des catégories et des sites dans l'administration"
   },
+  "about": {
+    "title": "À propos"
+  },
   "category": {
     "siteCount": "{count} sites",
     "noSitesTitle": "Aucun site dans cette catégorie",
@@ -86,7 +89,8 @@
     "backHome": "Retour à l'accueil"
   },
   "footer": {
-    "admin": "Admin"
+    "admin": "Admin",
+    "about": "À propos"
   },
   "submission": {
     "trigger": "Proposer un site",
@@ -585,7 +589,18 @@
       "memoryModeToastDesc": "Aucune base de données connectée. Les paramètres seront réinitialisés après redémarrage ou recyclage. Les fonctions comme les détails du site nécessitent une base de données.",
       "workspaceContext": "Espace de travail actuel : {name}",
       "workspaceIsDefault": " (configuration globale)",
-      "workspaceOverrideHint": "Ces champs d'affichage s'appliquent uniquement à cet espace ; les valeurs vides retombent sur les réglages globaux"
+      "workspaceOverrideHint": "Ces champs d'affichage s'appliquent uniquement à cet espace ; les valeurs vides retombent sur les réglages globaux",
+      "secAbout": "Page À propos",
+      "secAboutDesc": "Activation et contenu de la page À propos (contenu par espace de travail)",
+      "aboutEnableLabel": "Activer la page À propos",
+      "aboutEnableHint": "Une fois activée, la page /about est affichée avec un lien dans le pied de page",
+      "aboutContentLabel": "Contenu (Markdown)",
+      "aboutContentPlaceholder": "Markdown pris en charge, ex. :\n\n# À propos de nous\n\nPrésentez ce site…",
+      "aboutContentHint": "Markdown (GFM) pris en charge ; le HTML brut n'est pas interprété. Laissez vide pour revenir au contenu global par défaut",
+      "aboutTabEdit": "Modifier",
+      "aboutTabPreview": "Aperçu",
+      "aboutEmptyPreview": "Aucun contenu",
+      "aboutFallbackHint": "Le contenu est vide ; le contenu global par défaut sera affiché"
     },
     "profile": {
       "admin": "Admin",

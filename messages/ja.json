@@ -75,6 +75,9 @@
     "noCategoriesTitle": "カテゴリーがありません",
     "noCategoriesDesc": "先に管理画面でカテゴリーとサイトを作成してください"
   },
+  "about": {
+    "title": "このサイトについて"
+  },
   "category": {
     "siteCount": "{count} サイト",
     "noSitesTitle": "このカテゴリーにサイトがありません",
@@ -86,7 +89,8 @@
     "backHome": "ホームに戻る"
   },
   "footer": {
-    "admin": "管理画面"
+    "admin": "管理画面",
+    "about": "このサイトについて"
   },
   "submission": {
     "trigger": "サイトを投稿",
@@ -585,7 +589,18 @@
       "memoryModeToastDesc": "データベースに接続されていないため、設定はインスタンスの再起動・リサイクル後にリセットされます。サイト詳細などの機能にはデータベース接続が必要です。",
       "workspaceContext": "現在のワークスペース：{name}",
       "workspaceIsDefault": "（グローバル設定）",
-      "workspaceOverrideHint": "ここの表示項目は現在のワークスペースのみに適用され、空欄はグローバル設定にフォールバックします"
+      "workspaceOverrideHint": "ここの表示項目は現在のワークスペースのみに適用され、空欄はグローバル設定にフォールバックします",
+      "secAbout": "About ページ",
+      "secAboutDesc": "About ページの表示切り替えとコンテンツ（コンテンツはワークスペースごと）",
+      "aboutEnableLabel": "About ページを有効にする",
+      "aboutEnableHint": "有効にすると /about ページが表示され、フッターにリンクが追加されます",
+      "aboutContentLabel": "About コンテンツ（Markdown）",
+      "aboutContentPlaceholder": "Markdown 記法に対応。例：\n\n# このサイトについて\n\nサイトの紹介文をここに書きます",
+      "aboutContentHint": "Markdown（GFM）に対応。生の HTML は解釈されません。空欄の場合はグローバルの既定コンテンツを表示します",
+      "aboutTabEdit": "編集",
+      "aboutTabPreview": "プレビュー",
+      "aboutEmptyPreview": "コンテンツがありません",
+      "aboutFallbackHint": "コンテンツが空のため、グローバルの既定コンテンツが表示されます"
     },
     "profile": {
       "admin": "管理者",

@@ -19,6 +19,7 @@ export const FALLBACK_WORKSPACE: WorkspaceItem = {
   siteDescription: null,
   siteLogo: null,
   favicon: null,
+  aboutContent: null,
   isDefault: true,
   isPublished: true,
   order: 0,

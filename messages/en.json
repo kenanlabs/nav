@@ -75,6 +75,9 @@
     "noCategoriesTitle": "No categories yet",
     "noCategoriesDesc": "Create categories and sites in the admin panel first"
   },
+  "about": {
+    "title": "About"
+  },
   "category": {
     "siteCount": "{count} sites",
     "noSitesTitle": "No sites in this category",
@@ -86,7 +89,8 @@
     "backHome": "Back to home"
   },
   "footer": {
-    "admin": "Admin"
+    "admin": "Admin",
+    "about": "About"
   },
   "submission": {
     "trigger": "Submit a site",
@@ -585,7 +589,18 @@
       "memoryModeToastDesc": "No database connected. Settings will be reset after the instance restarts or is recycled. Features like site detail need a database to persist.",
       "workspaceContext": "Current workspace: {name}",
       "workspaceIsDefault": " (global config)",
-      "workspaceOverrideHint": "These display fields apply to this workspace only; empty values fall back to global settings"
+      "workspaceOverrideHint": "These display fields apply to this workspace only; empty values fall back to global settings",
+      "secAbout": "About page",
+      "secAboutDesc": "Toggle and content of the about page (content is per workspace)",
+      "aboutEnableLabel": "Enable about page",
+      "aboutEnableHint": "When enabled, the /about page is shown with a link in the footer",
+      "aboutContentLabel": "About content (Markdown)",
+      "aboutContentPlaceholder": "Markdown supported, e.g.:\n\n# About us\n\nIntroduce this site...",
+      "aboutContentHint": "Markdown (GFM) supported; raw HTML is not rendered. Leave empty to fall back to the global default content",
+      "aboutTabEdit": "Edit",
+      "aboutTabPreview": "Preview",
+      "aboutEmptyPreview": "No content yet",
+      "aboutFallbackHint": "Content is empty; the global default content will be shown"
     },
     "profile": {
       "admin": "Admin",

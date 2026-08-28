@@ -18,6 +18,7 @@ export interface WorkspaceItem {
   siteDescription: string | null
   siteLogo: string | null
   favicon: string | null
+  aboutContent: string | null
   isDefault: boolean
   isPublished: boolean
   order: number
@@ -101,6 +102,8 @@ export interface SystemSettingsItem {
   enableSubmission: boolean
   enableSiteDetail: boolean
   enablePoetry: boolean
+  enableAboutPage: boolean
+  aboutContent: string | null
   submissionMaxPerDay: number
   githubUrl: string | null
   defaultLanguage: string
@@ -145,6 +148,7 @@ const initialWorkspaces: WorkspaceItem[] = [
     siteDescription: null,
     siteLogo: null,
     favicon: null,
+    aboutContent: null,
     isDefault: true,
     isPublished: true,
     order: 0,
@@ -296,6 +300,8 @@ const initialSystemSettings: SystemSettingsItem = {
   enableSubmission: true,
   enableSiteDetail: false,
   enablePoetry: true,
+  enableAboutPage: false,
+  aboutContent: null,
   submissionMaxPerDay: 3,
   githubUrl: 'https://github.com/kenanlabs/nav',
   defaultLanguage: 'zh',
@@ -371,6 +377,7 @@ class InMemoryDatabase {
         siteDescription: args.data.siteDescription ?? null,
         siteLogo: args.data.siteLogo ?? null,
         favicon: args.data.favicon ?? null,
+        aboutContent: args.data.aboutContent ?? null,
         isDefault: args.data.isDefault ?? false,
         isPublished: args.data.isPublished ?? false,
         order: args.data.order ?? this.workspaces.length + 1,
