@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react"
 import { useTranslations } from "next-intl"
+import { pinyin } from "pinyin-pro"
 import { ScrollHeader } from "./scroll-header"
 import { Footer } from "./footer"
 import { SiteGrid } from "./site-grid"
@@ -60,16 +61,41 @@ export function SearchableLayout({
 
   const anchorLinks = useAnchorLinks ?? isHomePath
 
+  // 预计算每个 site 的拼音，用于拼音搜索匹配
+  const pinyinMap = useMemo(() => {
+    const map = new Map<string, { namePinyin: string; descPinyin: string }>()
+    for (const site of flatSites) {
+      map.set(site.id, {
+        namePinyin: pinyin(site.name, { toneType: "none", type: "array" }).join("").toLowerCase(),
+        descPinyin: pinyin(site.description, { toneType: "none", type: "array" }).join("").toLowerCase(),
+      })
+    }
+    return map
+  }, [flatSites])
+
   const filteredSites = useMemo(() => {
     if (!searchQuery.trim()) return []
 
     const query = searchQuery.toLowerCase()
-    return flatSites.filter(site =>
-      site.name.toLowerCase().includes(query) ||
-      site.description.toLowerCase().includes(query) ||
-      site.url.toLowerCase().includes(query)
-    )
-  }, [searchQuery, flatSites])
+    return flatSites.filter(site => {
+      // 原文匹配
+      if (
+        site.name.toLowerCase().includes(query) ||
+        site.description.toLowerCase().includes(query) ||
+        site.url.toLowerCase().includes(query)
+      ) {
+        return true
+      }
+      // 拼音匹配
+      const py = pinyinMap.get(site.id)
+      if (py) {
+        if (py.namePinyin.includes(query) || py.descPinyin.includes(query)) {
+          return true
+        }
+      }
+      return false
+    })
+  }, [searchQuery, flatSites, pinyinMap])
 
   const isSearching = searchQuery.trim().length > 0
   const hasPoetryRightSpace = poetryMounted && isPoetryVisible
