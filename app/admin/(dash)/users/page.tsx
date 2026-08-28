@@ -44,14 +44,12 @@ interface SystemSettingsData {
   footerLinks: Array<{ name: string; url: string }>
   showAdminLink: boolean
   enableVisitTracking: boolean
-  enableSubmission: boolean
   enableSiteDetail: boolean
   enablePoetry: boolean
   enableAboutPage: boolean
   aboutContent: string | undefined
   // 非默认工作区上下文时，全局设置的回退值（提示用）
   aboutContentFallback?: string | null
-  submissionMaxPerDay: number
   githubUrl: string | undefined
   showIcp: boolean
   icpNumber: string | undefined
@@ -84,12 +82,10 @@ export default function AdminSettingsPage() {
     footerLinks: [],
     showAdminLink: true,
     enableVisitTracking: true,
-    enableSubmission: true,
     enableSiteDetail: false,
     enablePoetry: true,
     enableAboutPage: false,
     aboutContent: undefined,
-    submissionMaxPerDay: 3,
     githubUrl: undefined,
     showIcp: false,
     icpNumber: undefined,
@@ -162,10 +158,8 @@ export default function AdminSettingsPage() {
         showIcp: global.showIcp || false,
         icpNumber: global.icpNumber || undefined,
         icpLink: global.icpLink || undefined,
-        enableSubmission: global.enableSubmission ?? true,
         enableSiteDetail: global.enableSiteDetail ?? false,
         enablePoetry: global.enablePoetry ?? true,
-        submissionMaxPerDay: global.submissionMaxPerDay ?? 3,
         defaultLanguage: isLocale(global.defaultLanguage) ? global.defaultLanguage : "zh",
       }))
     }
@@ -447,38 +441,6 @@ export default function AdminSettingsPage() {
                     checked={settings.enablePoetry}
                     onCheckedChange={(checked) => setSettings({ ...settings, enablePoetry: checked })}
                   />
-                </div>
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label htmlFor="enable-submission">{t("submissionLabel")}</Label>
-                      <p className="text-sm text-muted-foreground">
-                        {t("submissionHint")}
-                      </p>
-                    </div>
-                    <Switch
-                      id="enable-submission"
-                      checked={settings.enableSubmission}
-                      onCheckedChange={(checked) => setSettings({ ...settings, enableSubmission: checked })}
-                    />
-                  </div>
-                  {settings.enableSubmission && (
-                    <div className="space-y-2">
-                      <Label htmlFor="submission-limit">{t("submissionLimitLabel")}</Label>
-                      <Input
-                        id="submission-limit"
-                        type="number"
-                        min="1"
-                        max="100"
-                        value={settings.submissionMaxPerDay}
-                        onChange={(e) => setSettings({ ...settings, submissionMaxPerDay: parseInt(e.target.value) || 3 })}
-                        className="w-32"
-                      />
-                      <p className="text-sm text-muted-foreground">
-                        {t("submissionLimitHint", { count: settings.submissionMaxPerDay })}
-                      </p>
-                    </div>
-                  )}
                 </div>
               </div>
             )}

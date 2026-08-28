@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Github, ArrowRight, BarChart3, FolderTree, Search, Smartphone, Moon, Scroll, FileEdit, Palette, ImageIcon } from "lucide-react"
+import { Github, ArrowRight, BarChart3, FolderTree, Search, Smartphone, Moon, Scroll, Palette, ImageIcon } from "lucide-react"
 import {
   Field,
   FieldGroup,
@@ -223,24 +223,6 @@ function LoginForm() {
               <span className="text-[9px] text-muted-foreground">{t("featureDarkShort")}</span>
               <div className="h-3 w-px bg-primary/20" />
               <span className="text-[9px] text-muted-foreground">{t("featureSystem")}</span>
-            </div>
-          </div>
-
-          {/* 7. 网站收录 */}
-          <div className="absolute top-[43%] right-[5%] bg-background/80 backdrop-blur-sm border border-primary/10 rounded-xl p-4 shadow-xl opacity-60">
-            <div className="flex items-center gap-2 mb-2">
-              <FileEdit className="size-4 text-primary" />
-              <span className="text-xs font-medium">{t("featureSubmission")}</span>
-            </div>
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[9px] text-muted-foreground">{t("featureTodayCount")}</span>
-                <span className="text-[9px] font-medium text-primary">+3</span>
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[9px] text-muted-foreground">{t("featurePending")}</span>
-                <span className="bg-primary/20 text-primary px-1.5 py-0.5 rounded text-[8px]">2</span>
-              </div>
             </div>
           </div>
 

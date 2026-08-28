@@ -56,8 +56,6 @@ export interface SiteItem {
   url: string
   description: string
   iconUrl: string | null
-  submitterContact: string | null
-  submitterIp: string | null
   categoryId: string
   isPublished: boolean
   isPinned?: boolean
@@ -99,12 +97,10 @@ export interface SystemSettingsItem {
   icpNumber: string | null
   icpLink: string | null
   enableVisitTracking: boolean
-  enableSubmission: boolean
   enableSiteDetail: boolean
   enablePoetry: boolean
   enableAboutPage: boolean
   aboutContent: string | null
-  submissionMaxPerDay: number
   githubUrl: string | null
   defaultLanguage: string
   createdAt: Date
@@ -247,8 +243,6 @@ const initialSites: SiteItem[] = seedSitesData.map((s, idx) => {
     url: s.url,
     description: s.description,
     iconUrl: `https://www.google.com/s2/favicons?domain=${new URL(s.url).hostname}&sz=128`,
-    submitterContact: null,
-    submitterIp: null,
     categoryId: cat.id,
     isPublished: true,
     isPinned: Boolean(s.isPinned),
@@ -297,12 +291,10 @@ const initialSystemSettings: SystemSettingsItem = {
   icpNumber: null,
   icpLink: null,
   enableVisitTracking: true,
-  enableSubmission: true,
   enableSiteDetail: false,
   enablePoetry: true,
   enableAboutPage: false,
   aboutContent: null,
-  submissionMaxPerDay: 3,
   githubUrl: 'https://github.com/kenanlabs/nav',
   defaultLanguage: 'zh',
   createdAt: new Date(),
@@ -769,15 +761,6 @@ class InMemoryDatabase {
         if (args.where.isPinned !== undefined) {
           result = result.filter(s => s.isPinned === args.where.isPinned)
         }
-        if (args.where.submitterIp !== undefined) {
-          if (args.where.submitterIp && typeof args.where.submitterIp === 'object' && 'not' in args.where.submitterIp) {
-            result = result.filter(s => s.submitterIp !== null)
-          } else if (args.where.submitterIp === null) {
-            result = result.filter(s => s.submitterIp === null)
-          } else {
-            result = result.filter(s => s.submitterIp === args.where.submitterIp)
-          }
-        }
         if (args.where.id?.in) {
           result = result.filter(s => args.where.id.in.includes(s.id))
         }
@@ -890,8 +873,6 @@ class InMemoryDatabase {
         url: args.data.url || '',
         description: args.data.description || '',
         iconUrl: icon || null,
-        submitterContact: args.data.submitterContact || null,
-        submitterIp: args.data.submitterIp || null,
         categoryId: args.data.categoryId || (this.categories[0]?.id ?? 'cat-1'),
         isPublished: args.data.isPublished ?? true,
         isPinned: args.data.isPinned ?? false,

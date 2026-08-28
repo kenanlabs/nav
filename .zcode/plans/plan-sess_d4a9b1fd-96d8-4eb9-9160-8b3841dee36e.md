@@ -1,54 +1,37 @@
-# 多工作区 About 页面实现方案
+# 删除「网站收录」功能方案
 
-每个工作区拥有自己的 About 内容(`Workspace.aboutContent` 覆盖),为空时回退全局默认内容(`SystemSettings.aboutContent`),与现有 siteName/Logo 的覆盖模式完全一致。About 功能总开关 `enableAboutPage` 为全局设置(开启后所有工作区都有 About 页)。
+访客投稿功能整体移除;联系邮箱不做任何新代码——About 页 Markdown 和页脚友情链接(支持 `mailto:` 链接)今天就已覆盖该需求,管理员自行填写即可。
 
-## 1. 数据模型(prisma/schema.prisma + 手写迁移)
+## 1. 数据模型
+- `prisma/schema.prisma`:删除 `Site.submitterContact` / `Site.submitterIp` 与 `SystemSettings.enableSubmission` / `submissionMaxPerDay`。
+- 新增手写迁移 `prisma/migrations/20260828010000_remove_submission/migration.sql`:`DROP COLUMN` 四列(历史索引 `site_submitter_ip_idx` 已被 `20260826_fix_column_name_drift` 迁移删除,无需再处理)。注意:已部署环境的待审投稿数据将随列删除,不可恢复。
 
-本地无数据库,按现有迁移风格(如 `20260827100000_add_enable_poetry`)手写 SQL 迁移:
+## 2. 服务端(lib)
+- `lib/actions.ts`:删除 `submitSite` 整段(约 2443–2510,含区块注释);`getSitesWithPagination` 的 `submitterIp` 参数与过滤;create/update site 中的 `submitterContact`/`submitterIp` 透传;`ALLOWED_SETTINGS_FIELDS` 与 `updateSystemSettings` 签名中的两个 submission 字段。
+- `lib/prisma.ts`(内存兜底库):`SiteItem`/`SystemSettingsItem` 接口、初始值、mock `findMany` 的 `submitterIp` 过滤、mock `create` 的映射,全部同步删除。
+- `lib/client-settings.ts`:`PublicSettings`/`defaultSettings` 删除两个 submission 字段(公开接口 `/api/settings` 是整表透传,自动不再下发)。
 
-- 新增 `prisma/migrations/20260828000000_add_about_page/migration.sql`:
-  - `ALTER TABLE "Workspace" ADD COLUMN "about_content" TEXT;`
-  - `ALTER TABLE "SystemSettings" ADD COLUMN "enable_about_page" BOOLEAN NOT NULL DEFAULT false;`
-  - `ALTER TABLE "SystemSettings" ADD COLUMN "about_content" TEXT;`
-- schema.prisma 对应三处字段(`Workspace.aboutContent` 注释「为空时回退 SystemSettings」),`npx prisma validate` + `prisma generate` 验证。
+## 3. 前台组件
+- 删除 `components/layout/site-submission-dialog.tsx` 整个文件。
+- `components/layout/header.tsx`:删除 import、`enableSubmission` state(54)、赋值(71)、按钮挂载块(279–282);logo 加载逻辑保留。
 
-## 2. 服务端数据层(lib/actions.ts)
+## 4. 管理端
+- 设置页 `app/admin/(dash)/users/page.tsx`:删除 `enableSubmission`/`submissionMaxPerDay` 的 state、初始化、水合及「启用网站收录 + 每日限制」JSX 块(约 452–481)。
+- 站点管理页 `app/admin/(dash)/sites/page.tsx`:删除类型中两字段、「提交者筛选」Select(state `filterSubmitter`、查询参数、重置条件)及表格「提交来源」列。
+- 仪表盘:`app/api/admin/stats/content/route.ts` 删除 `pendingSubmissions` 计数(保留 weekNewSites/missingIcons);`app/admin/(dash)/dashboard/page.tsx` 删除「待审核」卡片及数据引用。
+- 登录页 `app/admin/login/page.tsx`:删除「#7 网站收录」装饰卡片。
 
-- 新增 `getAboutPage()`:仿照 `getDisplaySettings()`(actions.ts:1595),`getCurrentWorkspace()` + `getSystemSettings()` → 返回 `{ enabled, siteName, content: workspace.aboutContent || settings.aboutContent || "" }`,仅供 /about 页服务端调用(避免 Markdown 全文进公开设置接口)。
-- `getWorkspaceDisplaySettings()`(actions.ts:112):display 增加 `aboutContent`(默认工作区 → 全局值;非默认 → `workspace.aboutContent ?? ""`,空串表示回退全局)。
-- `updateWorkspaceDisplaySettings()`(actions.ts:155):签名增加 `aboutContent?: string`;默认工作区分支转发给 `updateSystemSettings`,非默认写 `workspace.aboutContent`(trim || null);两处都补 `revalidatePath("/about")`。
-- `updateSystemSettings()`(actions.ts:1633):签名与 `ALLOWED_SETTINGS_FIELDS` 增加 `aboutContent`,补 `revalidatePath("/about")`。
+## 5. i18n(6 个语言文件,用脚本统一删)
+- 删除顶层 `submission` 命名空间(26 个 key)。
+- 删除 `login.featureSubmission` / `featureTodayCount` / `featurePending`。
+- 删除 `dashboard.statPending`。
+- 删除 `admin.settings.submissionLabel` / `submissionHint` / `submissionLimitLabel` / `submissionLimitHint`。
+- 删除站点管理页的 `filterSource` / `filterSourceAll` / `sourceUser` / `sourceAdminCreated` / `sourceAdmin`。
 
-## 3. 公开接口与类型
-
-- `app/api/settings/route.ts`:公开响应中剥离 `aboutContent`(防止整篇 Markdown 随每个页面下发),保留 `enableAboutPage` 供 Footer 判断。
-- `lib/client-settings.ts`:`PublicSettings` 与 `defaultSettings` 增加 `enableAboutPage: false`。
-
-## 4. 前台页面与入口
-
-- 新增 `app/(public)/about/page.tsx`(服务端组件):
-  - `getAboutPage()` 取内容;`!enabled || !content` 时 `notFound()`(与 category 页模式一致)。
-  - `generateMetadata`:「{关于} - {siteName}」。
-  - 仿首页取 `getCategories()` + `getSites()`,包在 `SearchableLayout` 里获得一致的 Header/Footer/搜索体验;正文用 Card + 现有 `MarkdownContent` 组件渲染(max-w 适中居中)。
-- `components/layout/footer.tsx`:友链与管理入口之间,`settings?.enableAboutPage` 时渲染 `<Link href="/about">` 关于链接。
-
-## 5. 管理端编辑(app/admin/(dash)/users/page.tsx)
-
-设置页(当前挂在工作区上下文下)新增第五个分区 `about`:
-
-- `sections` 增加 `{ id: "about", titleKey: "secAbout", icon: FileText }`;`admin-scope-changed` effect 中 about 分区声明为 workspace 作用域(工作区切换器保持可用)。
-- `SystemSettingsData` 增加 `aboutContent`;`loadSettings` 中从 `getWorkspaceDisplaySettings` 的 display 取工作区感知值。
-- `handleSaveSettings` 非默认工作区分支:`aboutContent` 传给 `updateWorkspaceDisplaySettings` 并从传给 `updateSystemSettings` 的 rest 中剥离(默认分支整体透传)。
-- 新分区 JSX:工作区上下文横幅(复用 workspaceContext/workspaceOverrideHint 文案)、`enableAboutPage` 全局开关(Switch)、Markdown 编辑 Textarea(等宽字体)+ 编辑/预览 Tab 切换(预览复用 `MarkdownContent`),空内容时提示「将回退全局默认内容」。
-
-## 6. 国际化(messages/ 下 6 个语言文件)
-
-- 顶层 `footer.about`(关于/About/Über/…
-- 顶层 `about.title`(页面标题/metadata 用)。
-- `admin.settings` 新增:secAbout、secAboutDesc、aboutEnableLabel/Hint、aboutContentLabel/Placeholder/Hint、aboutTabEdit/aboutTabPreview、aboutFallbackHint。
+## 6. 文档
+- `README.md` 与 `README.zh-CN.md`:移除 Site Submission 特性行及多工作区隔离表格中的 submissions 字样。
 
 ## 7. 验证
-
-- `npx prisma validate` + `npx prisma generate`(本地无 DB,迁移由用户按现有 `db:migrate:deploy` 流程执行)。
-- `npx tsc --noEmit` 与 `npm run lint` 通过。
-- 手动核对:非默认工作区保存路径、公开接口不泄漏 aboutContent、Footer 入口条件、`?__workspace=slug` 预览路径下的工作区内容解析。
+- `npx tsc --noEmit`、`npm run lint`、`npx prisma validate`(带占位 DATABASE_URL)。
+- 全局 grep 确认 `submission|submitter` 零残留(除 git 历史与 .monkeycode 文档)。
+- 注意:验证时避免再触发上次 `npx prisma` 意外升级依赖的问题(用 `npx prisma@5.22.0` 或检查 package.json 后还原)。

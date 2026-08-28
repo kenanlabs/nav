@@ -7,14 +7,7 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
   try {
-    const [pendingSubmissions, weekNewSites, missingIcons] = await Promise.all([
-      // 待审核的用户提交（未发布的用户提交站点）
-      prisma.site.count({
-        where: {
-          submitterIp: { not: null },
-          isPublished: false,
-        },
-      }),
+    const [weekNewSites, missingIcons] = await Promise.all([
       // 近 7 天新增网站
       prisma.site.count({
         where: {
@@ -31,11 +24,11 @@ export async function GET() {
       }),
     ])
 
-    return NextResponse.json({ pendingSubmissions, weekNewSites, missingIcons })
+    return NextResponse.json({ weekNewSites, missingIcons })
   } catch (error) {
     console.error("Error fetching content stats:", error)
     return NextResponse.json(
-      { pendingSubmissions: 0, weekNewSites: 0, missingIcons: 0 },
+      { weekNewSites: 0, missingIcons: 0 },
       { status: 500 }
     )
   }

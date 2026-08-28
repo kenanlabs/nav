@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardAction } from "@/components/ui/card"
 import { useTranslations } from "next-intl"
 import { useEffect, useState } from "react"
-import { Loader2, BarChart3, TrendingUp, Globe, FolderKanban, Users, CalendarPlus, Inbox, Sparkles } from "lucide-react"
+import { Loader2, BarChart3, TrendingUp, Globe, FolderKanban, Users, CalendarPlus, Sparkles } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
@@ -82,7 +82,6 @@ type StatTitleKey =
   | "statVisitors"
   | "statTotalVisits"
   | "statTodayVisits"
-  | "statPending"
   | "statWeekNew"
   | "statMissingIcons"
 
@@ -113,7 +112,6 @@ export default function AdminDashboardPage() {
     { titleKey: "statVisitors", value: 0, loading: true, icon: Users },
     { titleKey: "statTotalVisits", value: 0, loading: true, icon: TrendingUp },
     { titleKey: "statTodayVisits", value: 0, loading: true, icon: CalendarPlus, badge: null as number | null },
-    { titleKey: "statPending", value: 0, loading: true, icon: Inbox, href: "/admin/sites" },
     { titleKey: "statWeekNew", value: 0, loading: true, icon: Sparkles, href: "/admin/sites" },
     { titleKey: "statMissingIcons", value: 0, loading: true, icon: Globe, href: "/admin/sites" },
   ])
@@ -175,7 +173,7 @@ export default function AdminDashboardPage() {
           frequency: Array.isArray(frequencyRaw?.frequency) ? frequencyRaw.frequency : [],
         }
         const todayData = ((await safeJson(todayRes)) ?? { today: 0, growthRate: null }) as { today: number; growthRate: number | null }
-        const contentData = ((await safeJson(contentRes)) ?? { pendingSubmissions: 0, weekNewSites: 0, missingIcons: 0 }) as { pendingSubmissions: number; weekNewSites: number; missingIcons: number }
+        const contentData = ((await safeJson(contentRes)) ?? { weekNewSites: 0, missingIcons: 0 }) as { weekNewSites: number; missingIcons: number }
         const distributionRaw = (await safeJson(distributionRes)) as { data?: Array<{ category: string; count: number; share: number }>; total?: number } | null
         const distributionData = {
           data: Array.isArray(distributionRaw?.data) ? distributionRaw.data : [],
@@ -188,7 +186,6 @@ export default function AdminDashboardPage() {
           { titleKey: "statVisitors", value: usersData.total || 0, loading: false, icon: Users },
           { titleKey: "statTotalVisits", value: visitsData.totalVisits || 0, loading: false, icon: TrendingUp },
           { titleKey: "statTodayVisits", value: todayData.today || 0, loading: false, icon: CalendarPlus, badge: todayData.growthRate ?? null },
-          { titleKey: "statPending", value: contentData.pendingSubmissions || 0, loading: false, icon: Inbox, href: "/admin/sites" },
           { titleKey: "statWeekNew", value: contentData.weekNewSites || 0, loading: false, icon: Sparkles, href: "/admin/sites" },
           { titleKey: "statMissingIcons", value: contentData.missingIcons || 0, loading: false, icon: Globe, href: "/admin/sites" },
         ])

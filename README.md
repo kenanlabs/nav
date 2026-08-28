@@ -21,7 +21,6 @@ A clean and modern link navigation system built with Next.js 15, Prisma, and sha
 - 🖼️ Smart Icons - auto-fetches site favicons, falls back to the first letter on failure
 - 🌓 Dark Mode - one-click toggle (Light / Dark / System)
 - 📜 **Daily Poetry** - fetches a poem of the day with elegant vertical layout
-- 📝 **Site Submission** - visitors can submit sites, published after admin review
 
 ### Admin Dashboard
 - 📊 Statistics - visit frequency charts, site rankings
@@ -135,7 +134,7 @@ Browser visits nav.example.com ─┘   (unmatched/unpublished) ──> Render t
 
 | Content | Scope |
 |---------|-------|
-| Categories, sites, submissions | Isolated per workspace |
+| Categories, sites | Isolated per workspace |
 | Title, description, logo, favicon | Per-workspace override, empty falls back to global |
 | Category slug uniqueness | Unique within a workspace, reusable across workspaces |
 | sitemap / robots | Output per visiting domain's workspace |

@@ -11,7 +11,6 @@ import { LocaleToggle } from "@/components/locale-toggle"
 import { PoetryToggle } from "@/components/poetry-toggle"
 import { FaviconServiceToggle } from "@/components/favicon-service-toggle"
 import { CardDensityToggle } from "@/components/card-density-toggle"
-import { SiteSubmissionDialog } from "@/components/layout/site-submission-dialog"
 import {
   Drawer,
   DrawerContent,
@@ -51,7 +50,6 @@ export function Header({
   onCategoryClick,
 }: HeaderProps) {
   const [logo, setLogo] = useState<string | null>(siteLogo)
-  const [enableSubmission, setEnableSubmission] = useState<boolean>(true)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [mounted, setMounted] = useState(false)
   const isDesktop = useMediaQuery("(min-width: 768px)")
@@ -68,7 +66,6 @@ export function Header({
       const settings = await fetchPublicSettings()
       if (!cancelled) {
         if (settings.siteLogo) setLogo(settings.siteLogo)
-        setEnableSubmission(settings.enableSubmission ?? true)
       }
     }
 
@@ -275,11 +272,6 @@ export function Header({
                 </kbd>
               )}
             </div>
-
-            {/* 网站收录按钮 */}
-            {enableSubmission && (
-              <SiteSubmissionDialog categories={categories} />
-            )}
 
             <CardDensityToggle />
             <FaviconServiceToggle />

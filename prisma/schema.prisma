@@ -70,8 +70,6 @@ model Site {
   url              String
   description      String
   iconUrl          String?   @map("icon_url")
-  submitterContact String?   @map("submitter_contact")
-  submitterIp       String?  @map("submitter_ip")
   categoryId       String
   category         Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   isPublished      Boolean   @default(false)
@@ -150,9 +148,6 @@ model SystemSettings {
   icpLink          String?  @map("icp_link")
   // Visit tracking settings
   enableVisitTracking Boolean @default(true) @map("enable_visit_tracking")
-  // Submission settings (网站收录设置)
-  enableSubmission     Boolean  @default(true) @map("enable_submission")
-  submissionMaxPerDay  Int     @default(3) @map("submission_max_per_day")
   // Site detail dialog (二级详情弹窗)
   enableSiteDetail     Boolean  @default(false) @map("enable_site_detail")
   // Poetry card (今日诗词卡片总开关)
