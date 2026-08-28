@@ -57,12 +57,6 @@ interface TodayStats {
   growthRate: number | null
 }
 
-interface ContentStats {
-  pendingSubmissions: number
-  weekNewSites: number
-  missingIcons: number
-}
-
 interface CategoryDistribution {
   data: Array<{
     category: string
@@ -102,7 +96,6 @@ export default function AdminDashboardPage() {
   const [visitStats, setVisitStats] = useState<VisitStats | null>(null)
   const [frequencyData, setFrequencyData] = useState<FrequencyData | null>(null)
   const [todayStats, setTodayStats] = useState<TodayStats | null>(null)
-  const [contentStats, setContentStats] = useState<ContentStats | null>(null)
   const [categoryDistribution, setCategoryDistribution] = useState<CategoryDistribution | null>(null)
   const [timeRange, setTimeRange] = useState<TimeRange>(7)
   const [topCount, setTopCount] = useState<TopCount>(5)
@@ -193,7 +186,6 @@ export default function AdminDashboardPage() {
         setVisitStats(visitsData as unknown as Parameters<typeof setVisitStats>[0])
         setFrequencyData(frequencyData as unknown as Parameters<typeof setFrequencyData>[0])
         setTodayStats(todayData as unknown as Parameters<typeof setTodayStats>[0])
-        setContentStats(contentData as unknown as Parameters<typeof setContentStats>[0])
         setCategoryDistribution(distributionData as unknown as Parameters<typeof setCategoryDistribution>[0])
       } catch (error) {
         console.error("Failed to load stats:", error)
