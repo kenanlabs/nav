@@ -22,7 +22,6 @@ const SiteFormDialog = dynamic(
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 
@@ -224,8 +223,8 @@ export function SiteCard({ site, density: propDensity, dragEnabled = false }: Si
   if (isCompact) {
     return (
       <>
-      <TooltipProvider delayDuration={150}>
-        <Tooltip>
+      {/* TooltipProvider 由容器层（SearchableLayout 等）统一提供，避免每卡一棵 Provider 树 */}
+      <Tooltip>
           <TooltipTrigger asChild>
             <Link
               href={site.url}
@@ -302,7 +301,6 @@ export function SiteCard({ site, density: propDensity, dragEnabled = false }: Si
             </p>
           </TooltipContent>
         </Tooltip>
-      </TooltipProvider>
       {detailOpen && (
         <SiteDetailDialog
           site={site}
